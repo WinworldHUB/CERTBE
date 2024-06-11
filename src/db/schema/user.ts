@@ -1,8 +1,8 @@
 import { integer } from "drizzle-orm/pg-core";
 import { serial, varchar, text, pgTable, timestamp } from "drizzle-orm/pg-core";
-import { pfi } from "./pfi";
+import  pfi  from "./pfi";
 
-export const user = pgTable("user", {
+const user = pgTable("user", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 100 }).notNull(),
   email: varchar("email", { length: 100 }).notNull(),
@@ -13,3 +13,5 @@ export const user = pgTable("user", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   phoneNo: varchar("phone_no", { length: 15 }).notNull(),
 });
+
+export default user;

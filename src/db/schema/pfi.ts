@@ -7,7 +7,7 @@ import {
   text,
 } from "drizzle-orm/pg-core";
 
-export const pfi = pgTable("pfi", {
+const pfi = pgTable("pfi", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 100 }).notNull(),
   address: text("address").notNull(),
@@ -18,3 +18,6 @@ export const pfi = pgTable("pfi", {
   agreementDocument: text("agreement_document").notNull(),
   dueDiligenceDocument: text("due_diligence_document").notNull(),
 });
+
+
+export default pfi;

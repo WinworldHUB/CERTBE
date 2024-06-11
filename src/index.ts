@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
-
+import userRouter from "./routes/user-routes";
+import pfiRouter from "./routes/pfi-routes";
 const app = express();
 const PORT = 3000;
 
@@ -33,6 +34,9 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Hello World");
 });
 
+
+app.use("/users", userRouter);
+app.use("/pfis", pfiRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
