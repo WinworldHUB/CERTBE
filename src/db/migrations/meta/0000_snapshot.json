@@ -1,0 +1,79 @@
+{
+  "id": "b672590a-0106-4b77-a2b4-0b1cbc141fa7",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "6",
+  "dialect": "postgresql",
+  "tables": {
+    "public.pfi": {
+      "name": "pfi",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "agreement_amount": {
+          "name": "agreement_amount",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "agreement_period": {
+          "name": "agreement_period",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "commencement_date": {
+          "name": "commencement_date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expiry_date": {
+          "name": "expiry_date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "agreement_document": {
+          "name": "agreement_document",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "due_diligence_document": {
+          "name": "due_diligence_document",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

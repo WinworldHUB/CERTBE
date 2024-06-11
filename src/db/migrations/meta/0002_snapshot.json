@@ -1,0 +1,142 @@
+{
+  "id": "09d87cab-1958-448b-a246-55c15ee9f393",
+  "prevId": "c7e8ecf0-9d0c-4d77-bb2e-940d3413f630",
+  "version": "6",
+  "dialect": "postgresql",
+  "tables": {
+    "public.pfi": {
+      "name": "pfi",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "agreement_amount": {
+          "name": "agreement_amount",
+          "type": "numeric",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "agreement_period": {
+          "name": "agreement_period",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "commencement_date": {
+          "name": "commencement_date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "expiry_date": {
+          "name": "expiry_date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "agreement_document": {
+          "name": "agreement_document",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "due_diligence_document": {
+          "name": "due_diligence_document",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.user": {
+      "name": "user",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pfi_id": {
+          "name": "pfi_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "user_pfi_id_pfi_id_fk": {
+          "name": "user_pfi_id_pfi_id_fk",
+          "tableFrom": "user",
+          "tableTo": "pfi",
+          "columnsFrom": [
+            "pfi_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}
