@@ -5,3 +5,5 @@ export const fetchAllPfi: RequestHandler = async (req, res) => {
     const pfis = await db?.select().from(pfi);
     res.status(200).json(pfis);
 }
+
+export const createPfi: RequestHandler = async (req, res) => {}
