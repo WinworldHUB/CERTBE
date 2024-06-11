@@ -2,7 +2,6 @@ import { RequestHandler } from "express";
 import user from "../db/schema/user";
 import { db } from "../db/setup";
 import { eq } from "drizzle-orm";
-import { getAllUserRequest } from "../types";
 export const fetchAllUsersFromPfi: RequestHandler = async (req, res) => {
   const { pfiId } = req.params;
 
