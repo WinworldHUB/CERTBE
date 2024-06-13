@@ -1,8 +1,9 @@
 import { Router } from "express";
-import { fetchAllUsersFromPfi } from "../controllers/user-controller";
+import { fetchAllUsersFromPfi, signUp, login } from "../controllers/user-controller";
 
 const userRouter = Router();
 
 userRouter.get("/:pfiId",fetchAllUsersFromPfi);
-
+userRouter.post("/signup", signUp);
+userRouter.post("/login", login);
 export default userRouter;
