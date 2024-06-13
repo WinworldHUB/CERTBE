@@ -1,0 +1,1 @@
+ALTER TABLE "pfi" ALTER COLUMN "phone_no" DROP NOT NULL;

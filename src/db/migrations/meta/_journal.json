@@ -29,6 +29,20 @@
       "when": 1718131773704,
       "tag": "0003_minor_rawhide_kid",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1718308004400,
+      "tag": "0004_wakeful_skullbuster",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1718308067568,
+      "tag": "0005_smart_mastermind",
+      "breakpoints": true
     }
   ]
 }

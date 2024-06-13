@@ -5,21 +5,7 @@ import { eq } from "drizzle-orm";
 import { LoginRequest, User } from "../types";
 import stytchClient from "../stytchClient";
 export const fetchAllUsersFromPfi: RequestHandler = async (req, res) => {
-  const { pfiId } = req.params;
 
-  if (!pfiId) {
-    res.status(400).json({ error: "PFI ID is required" });
-    return;
-  }
-
-  const parsedPfiId = parseInt(pfiId);
-
-  const users = await db
-    ?.select()
-    .from(user)
-    .where(eq(user.pfiId, parsedPfiId));
-
-  res.status(200).json(users);
 };
 
 export const signUp: RequestHandler = async (req, res) => {
@@ -40,13 +26,6 @@ export const signUp: RequestHandler = async (req, res) => {
     });
 
     if (stytchresponse.status_code === 200) {
-      await db?.insert(user).values({
-        name: username,
-        email: email,
-        address: address,
-        pfiId: 1,
-        phoneNo: "123-456-7890",
-      });
 
       return res.status(201).json({
         success: true,
