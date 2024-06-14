@@ -7,6 +7,13 @@ import documents from "../db/schema/documents";
 
 
 export const pfiDocuments: RequestHandler = async (req, res) => {
+  const pfiId = req.params.pfiId;
+
+  if (!pfiId) {
+    return res.status(400).json({ message: "PFI ID is required" });
+  }
+
+  const files = req.files as Express.Multer.File[];
   if (!req.files || !Array.isArray(req.files)) {
     return res
       .status(400)
@@ -15,9 +22,6 @@ export const pfiDocuments: RequestHandler = async (req, res) => {
         allowedFiles: ".pdf, .docx, .doc, .txt",
       });
   }
-
-  const files = req.files as Express.Multer.File[];
-
   // Upload files to S3 and get the URLs
   try {
     const uploadPromises = files.map((file) => uploadFile(file));
@@ -26,11 +30,11 @@ export const pfiDocuments: RequestHandler = async (req, res) => {
     if (!urls || urls.length === 0) {
       return res.status(500).json({ message: "Failed to upload files" });
     }
-
+    const parsedPfiId = parseInt(pfiId);
     await db?.insert(documents).values({
       name: files[0].originalname,
       url: urls[0],
-      agreementId: 1,
+      agreementId: parsedPfiId,
     });
 
     res.status(201).json({
