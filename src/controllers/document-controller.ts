@@ -7,9 +7,9 @@ import documents from "../db/schema/documents";
 
 
 export const pfiDocuments: RequestHandler = async (req, res) => {
-  const pfiId = req.params.pfiId;
+  const agreementId = req.params.agreementId;
 
-  if (!pfiId) {
+  if (!agreementId) {
     return res.status(400).json({ message: "PFI ID is required" });
   }
 
@@ -30,11 +30,11 @@ export const pfiDocuments: RequestHandler = async (req, res) => {
     if (!urls || urls.length === 0) {
       return res.status(500).json({ message: "Failed to upload files" });
     }
-    const parsedPfiId = parseInt(pfiId);
+    const parsedAgreementId= parseInt(agreementId);
     await db?.insert(documents).values({
       name: files[0].originalname,
       url: urls[0],
-      agreementId: parsedPfiId,
+      agreementId: parsedAgreementId,
     });
 
     res.status(201).json({
