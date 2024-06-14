@@ -50,6 +50,7 @@ export const signUp: RequestHandler = async (req, res) => {
         data: { name, email },
         message: "Added Successfully",
         session_duration: "366 days",
+        fullName: name,
         session_token: stytchresponse.session_token,
         session_jwt: stytchresponse.session_jwt,
       });
@@ -84,6 +85,7 @@ export const login: RequestHandler = async (req, res) => {
         session_duration: "366 days",
         session_token: stytchresponse.session_token,
         session_jwt: stytchresponse.session_jwt,
+        fullName: stytchresponse.user.name,
       });
     }
   } catch (error) {
