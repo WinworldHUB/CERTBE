@@ -30,7 +30,7 @@ export const pfiDocuments: RequestHandler = async (req, res) => {
     await db?.insert(documents).values({
       name: files[0].originalname,
       url: urls[0],
-      agreementId: parseInt(req.params.agreementId),
+      agreementId: 1,
     });
 
     res.status(201).json({
