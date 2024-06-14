@@ -4,6 +4,7 @@ import { db } from "../db/setup";
 import { eq } from "drizzle-orm";
 import { LoginRequest, User } from "../types";
 import stytchClient from "../stytchClient";
+import users from "../db/schema/user";
 export const fetchAllUsersFromEmail: RequestHandler = async (req, res) => {
   const { email } = req.params;
   if (!email) {
@@ -17,9 +18,9 @@ export const fetchAllUsersFromEmail: RequestHandler = async (req, res) => {
 };
 
 export const signUp: RequestHandler = async (req, res) => {
-  const { username, email, phone, address, pfiId, password }: User = req.body;
+  const { username, email, phone, address, parent_id, password , role, isPrimary}: User = req.body;
 
-  if (!username || !email || !phone || !pfiId || !address || !password) {
+  if (!username || !email || !phone || !parent_id || !address || !password|| !role || !isPrimary) {
     return res
       .status(400)
       .json({ success: false, data: null, message: "All fields are required" });
@@ -27,13 +28,25 @@ export const signUp: RequestHandler = async (req, res) => {
 
   try {
     const name = username;
+    const first_name = name.split(" ")[0];
+    const last_name = name.split(" ")[1];
     const stytchresponse = await stytchClient.passwords.create({
+      name: {first_name: first_name, last_name: last_name},
       email: email,
       password: password,
       session_duration_minutes: 527040,
     });
 
     if (stytchresponse.status_code === 200) {
+      await db?.insert(users).values({
+        name,
+        email,
+        phoneNo: phone,
+        address,
+        parentId: parent_id,
+        role,
+        isPrimary,
+      })
       return res.status(201).json({
         success: true,
         data: { name, email },

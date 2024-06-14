@@ -1,6 +1,6 @@
 import { defineConfig } from "drizzle-kit";
 const databaseUrl =
-  "postgresql://admin:S9d95awcw1QE16236Xy4Fvjw@painfully-thorough-mole.a1.pgedge.io/cert_db?sslmode=require";
+  "postgresql://admin:2PrPI0JmOY02ybS3moE22312@widely-trusted-owl.a1.pgedge.io/cert_db?sslmode=require";
 export default defineConfig({
   schema: "./src/db/schema/**/*.{js,ts}",
   out: "./src/db/migrations",

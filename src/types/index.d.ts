@@ -1,6 +1,8 @@
 export type User = {
   username: string;
-  pfiId: number;
+  parent_id: number;
+  role: string;
+  isPrimary: boolean;
   email: string;
   phone: string;
   address: string;

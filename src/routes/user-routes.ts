@@ -3,7 +3,7 @@ import { fetchAllUsersFromEmail, signUp, login } from "../controllers/user-contr
 
 const userRouter = Router();
 
-userRouter.get("/:pfiId",fetchAllUsersFromEmail);
+userRouter.get("/:email",fetchAllUsersFromEmail);
 userRouter.post("/signup", signUp);
 userRouter.post("/login", login);
 export default userRouter;
