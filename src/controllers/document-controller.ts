@@ -10,7 +10,7 @@ export const pfiDocuments: RequestHandler = async (req, res) => {
   const agreementId = req.params.agreementId;
 
   if (!agreementId) {
-    return res.status(400).json({ message: "PFI ID is required" });
+    return res.status(400).json({ message: "Agreement ID is required" });
   }
 
   const files = req.files as Express.Multer.File[];

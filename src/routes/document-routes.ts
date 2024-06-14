@@ -4,6 +4,6 @@ import { pfiDocuments } from "../controllers/document-controller";
 
 const documentRouter = Router();
 
-documentRouter.post("/upload-file", upload.array("files", 10), pfiDocuments);
+documentRouter.post("/upload-file/:agreementId", upload.array("files", 10), pfiDocuments);
 
 export default documentRouter;
