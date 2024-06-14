@@ -43,6 +43,13 @@
       "when": 1718308067568,
       "tag": "0005_smart_mastermind",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1718352525772,
+      "tag": "0006_fine_nebula",
+      "breakpoints": true
     }
   ]
 }

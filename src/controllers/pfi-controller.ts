@@ -8,15 +8,15 @@ export const fetchAllPfi: RequestHandler = async (req, res) => {
 };
 
 export const registerPfi: RequestHandler = async (req, res) => {
-  const { name, phoneNo, address } = req.body;
+  const { name, phoneNo, address, email } = req.body;
 
-  if (!name || !phoneNo || !address) {
+  if (!name || !phoneNo || !address || !email) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
   const [pfiId] = await db
     ?.insert(pfi)
-    .values({ name, phoneNo, address })
+    .values({ name, phoneNo, address ,email })
     .returning({ insertedId: pfi.id });
 
   res.status(201).json({

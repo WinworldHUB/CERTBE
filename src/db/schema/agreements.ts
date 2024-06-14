@@ -16,6 +16,7 @@ const agreements = pgTable("agreements", {
   .notNull()
   .references(() => pfi.id),
   isActive: boolean("is_active").notNull().default(true),
+  status: varchar("status", { length: 20 }).notNull(),
   agreementAmount: decimal("agreement_amount").notNull(),
   agreementPeriod: varchar("agreement_period").notNull(),
   isPaid: boolean("is_paid").notNull().default(false),

@@ -1,10 +1,8 @@
 import { RequestHandler } from "express";
-import pfi from "../db/schema/pfi";
 import { db } from "../db/setup";
 import agreements from "../db/schema/agreements";
 import { eq } from "drizzle-orm";
 import uploadFile from "../utils/upload";
-import documents from "../db/schema/documents";
 
 export const getAgreementbyPfiId: RequestHandler = async (req, res) => {
   const { pfiId } = req.params;
@@ -22,25 +20,23 @@ export const getAgreementbyPfiId: RequestHandler = async (req, res) => {
 };
 
 export const registerDocument: RequestHandler = async (req, res) => {
-  const { dueDilligenceDoc, agreementDoc } = req.body;
+  const { documents } = req.body;
 
-  if (!dueDilligenceDoc || !agreementDoc) {
+  if (!documents ) {
     return res
       .status(400)
       .json({ message: "Agreement and Due Dilligence files are required" });
   }
   // save the files to S3 and get the URL
-  const dueDilligenceDocUrl = await uploadFile(dueDilligenceDoc);
-  const agreementDocUrl = await uploadFile(agreementDoc);
+  const document = await uploadFile(documents);
 
-  if (!dueDilligenceDocUrl || !agreementDocUrl) {
+  if (!document) {
     return res.status(500).json({ message: "Failed to upload files" });
   }
 
   res.status(201).json({
     urls: {
-      dueDilligenceDoc: dueDilligenceDocUrl,
-      agreementDoc: agreementDocUrl,
+      document,
     },
 
     message: "Files uploaded successfully",
