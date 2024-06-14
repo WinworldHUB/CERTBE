@@ -4,8 +4,16 @@ import { db } from "../db/setup";
 import { eq } from "drizzle-orm";
 import { LoginRequest, User } from "../types";
 import stytchClient from "../stytchClient";
-export const fetchAllUsersFromPfi: RequestHandler = async (req, res) => {
+export const fetchAllUsersFromEmail: RequestHandler = async (req, res) => {
+  const { email } = req.params;
+  if (!email) {
+    return res
+      .status(400)
+      .json({ success: false, data: null, message: "Email is required" });
+  }
 
+  const users = await db?.select().from(user).where(eq(user.email, email));
+  return res.status(200).json({ success: true, data: users });
 };
 
 export const signUp: RequestHandler = async (req, res) => {
@@ -26,7 +34,6 @@ export const signUp: RequestHandler = async (req, res) => {
     });
 
     if (stytchresponse.status_code === 200) {
-
       return res.status(201).json({
         success: true,
         data: { name, email },
@@ -43,37 +50,34 @@ export const signUp: RequestHandler = async (req, res) => {
   }
 };
 
-
-
 export const login: RequestHandler = async (req, res) => {
-    const {  email,  password }: LoginRequest = req.body;
-  
-    if ( !email ||  !password) {
-      return res
-        .status(400)
-        .json({ success: false, data: null, message: "All fields are required" });
-    }
-  
-    try {
-      const stytchresponse = await stytchClient.passwords.authenticate({ email: email,
-        password: password,
-        session_duration_minutes:527040
-       });
-  
-      if (stytchresponse.status_code === 200) {
-  
+  const { email, password }: LoginRequest = req.body;
+
+  if (!email || !password) {
+    return res
+      .status(400)
+      .json({ success: false, data: null, message: "All fields are required" });
+  }
+
+  try {
+    const stytchresponse = await stytchClient.passwords.authenticate({
+      email: email,
+      password: password,
+      session_duration_minutes: 527040,
+    });
+
+    if (stytchresponse.status_code === 200) {
       return res.status(201).json({
         success: true,
         message: "Logged In Successfully",
-        "session_duration": "366 days",
-        "session_token": stytchresponse.session_token,
-        "session_jwt": stytchresponse.session_jwt
+        session_duration: "366 days",
+        session_token: stytchresponse.session_token,
+        session_jwt: stytchresponse.session_jwt,
       });
-      }
-     
-    } catch (error) {
-      return res
-        .status(500)
-        .json({ success: false, data: null, message: "Unable to login", error });
     }
-  };
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, data: null, message: "Unable to login", error });
+  }
+};
