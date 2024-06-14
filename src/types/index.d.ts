@@ -1,5 +1,5 @@
 export type SignupRequest = {
-  username: string;
+  fullName: string;
   parent_id?: number;
   role?: string;
   isPrimary?: boolean;
@@ -16,13 +16,5 @@ export type LoginRequest = {
 
 type PfiRequest = {
   name: string;
-  phoneNo: string;
   address: string;
-  email: string;
-  isActive: boolean;
-  status: string;
-  agreementAmount: number;
-  agreementPeriod: string;
-  commencementDate?: Date;
-  expiryDate?: Date;
 };

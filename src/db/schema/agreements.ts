@@ -14,7 +14,9 @@ const agreements = pgTable("agreements", {
   id: serial("id").primaryKey(),
   pfiId: integer("pfi_id")
   .notNull()
-  .references(() => pfi.id),
+  .references(() => pfi.id,{
+    onDelete: "cascade",
+  }),
   isActive: boolean("is_active").notNull().default(true),
   status: varchar("status", { length: 20 }).notNull(),
   agreementAmount: decimal("agreement_amount").notNull(),

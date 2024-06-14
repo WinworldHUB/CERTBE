@@ -6,8 +6,9 @@ const users = pgTable("users", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 100 }).notNull(),
   email: varchar("email", { length: 100 }).notNull(),
-  address: text("address").notNull(),
-  parentId: integer("parent_id"),
+  parentId: integer("parent_id").references(() => pfi.id, {
+    onDelete: "cascade",
+  }),
   role: varchar("role", { length: 100 }), // admin, pfi user, approver
   isPrimary: boolean("is_primary").default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),

@@ -1,44 +1,44 @@
 import { RequestHandler } from "express";
 import { db } from "../db/setup";
 import agreements from "../db/schema/agreements";
-import { eq } from "drizzle-orm";
 import uploadFile from "../utils/upload";
+import documents from "../db/schema/documents";
 
-export const getAgreementbyPfiId: RequestHandler = async (req, res) => {
-  const { pfiId } = req.params;
-  if (!pfiId) {
-    res.status(400).json({ error: "PFI ID is required" });
-    return;
-  }
 
-  const parsedPfiId = parseInt(pfiId);
-  const pfis = await db
-    ?.select()
-    .from(agreements)
-    .where(eq(agreements.pfiId, parsedPfiId));
-  res.status(200).json(pfis);
-};
 
 export const pfiDocuments: RequestHandler = async (req, res) => {
-  const { documents } = req.body;
-
-  if (!documents ) {
+  if (!req.files || !Array.isArray(req.files)) {
     return res
       .status(400)
-      .json({ message: "Agreement and Due Dilligence files are required" });
-  }
-  // save the files to S3 and get the URL
-  const document = await uploadFile(documents);
-
-  if (!document) {
-    return res.status(500).json({ message: "Failed to upload files" });
+      .json({
+        message: "Invalid or no file(s) were given",
+        allowedFiles: ".pdf, .docx, .doc, .txt",
+      });
   }
 
-  res.status(201).json({
-    urls: {
-      document,
-    },
+  const files = req.files as Express.Multer.File[];
 
-    message: "Files uploaded successfully",
-  });
+  // Upload files to S3 and get the URLs
+  try {
+    const uploadPromises = files.map((file) => uploadFile(file));
+    const urls = await Promise.all(uploadPromises);
+
+    if (!urls || urls.length === 0) {
+      return res.status(500).json({ message: "Failed to upload files" });
+    }
+
+    await db?.insert(documents).values({
+      name: files[0].originalname,
+      url: urls[0],
+      agreementId: parseInt(req.params.agreementId),
+    });
+
+    res.status(201).json({
+      urls,
+      message: "Files uploaded successfully",
+    });
+  } catch (error) {
+    console.error("Error uploading files:", error);
+    res.status(500).json({ message: "Failed to upload files" });
+  }
 };

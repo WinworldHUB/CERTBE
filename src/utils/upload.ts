@@ -8,12 +8,12 @@ const s3 = new S3({
   region: AWS_CONFIG_S3.region,
 });
 
-const uploadFile = async (file: File): Promise<string> => {
+const uploadFile = async (file:  Express.Multer.File): Promise<string> => {
     try {
       const params = {
         Bucket: AWS_CONFIG_S3.s3BucketName,
-        Key: `${uuidv4()}-${file.name}`,
-        Body: file,
+        Key: `${uuidv4()}-${file.originalname}`,
+        Body: file.buffer,
       };
   
       const data = await s3.upload(params).promise();

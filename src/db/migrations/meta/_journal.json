@@ -64,6 +64,20 @@
       "when": 1718385944343,
       "tag": "0008_fluffy_golden_guardian",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1718388650027,
+      "tag": "0009_windy_satana",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1718388729679,
+      "tag": "0010_shiny_moira_mactaggert",
+      "breakpoints": true
     }
   ]
 }

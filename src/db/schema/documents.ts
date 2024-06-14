@@ -4,7 +4,7 @@ import agreements from "./agreements";
 
 const documents = pgTable("documents", {
     id: serial("id").primaryKey(),
-    agreementId: integer("agreement_id").notNull().references(() => agreements.id),
+    agreementId: integer("agreement_id").notNull().references(() => agreements.id,),
     name: varchar("name", { length: 100 }).notNull(),
     url: varchar("url", { length: 100 }).notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),

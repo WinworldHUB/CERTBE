@@ -18,31 +18,16 @@ export const fetchAllUsersFromEmail: RequestHandler = async (req, res) => {
 };
 
 export const signUp: RequestHandler = async (req, res) => {
-  const {
-    username,
-    email,
-    phone,
-    address,
-    parent_id,
-    password,
-    role,
-    isPrimary,
-  }: SignupRequest = req.body;
+  const { fullName, email, phone, address, password }: SignupRequest = req.body;
 
-  if (
-    !username ||
-    !email ||
-    !phone ||
-    !address ||
-    !password 
-  ) {
+  if (!fullName || !email || !phone || !address || !password) {
     return res
       .status(400)
       .json({ success: false, data: null, message: "All fields are required" });
   }
 
   try {
-    const name = username;
+    const name = fullName;
     const first_name = name.split(" ")[0];
     const last_name = name.split(" ")[1];
     const stytchresponse = await stytchClient.passwords.create({
@@ -57,10 +42,8 @@ export const signUp: RequestHandler = async (req, res) => {
         name,
         email,
         phoneNo: phone,
-        address,
-        parentId: parent_id,
-        role,
-        isPrimary,
+        role: "USER",
+        isPrimary: true,
       });
       return res.status(201).json({
         success: true,
