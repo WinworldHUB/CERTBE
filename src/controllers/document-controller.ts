@@ -1,13 +1,27 @@
 import { RequestHandler } from "express";
 import { db } from "../db/setup";
+import { eq } from "drizzle-orm";
 import agreements from "../db/schema/agreements";
 import uploadFile from "../utils/upload";
 import documents from "../db/schema/documents";
 
+export const getDocbyAgreementId: RequestHandler = async (req, res) => {
+  const {agreementId} = req.params;
+  if (!agreementId) {
+    res.status(400).json({ error: "PFI ID is required" });
+    return;
+  }
 
+  const parsedAgreementId = parseInt(agreementId);
+  const pfis = await db
+    ?.select()
+    .from(documents)
+    .where(eq(documents.agreementId, parsedAgreementId));
+  res.status(200).json(pfis);
+};
 
 export const pfiDocuments: RequestHandler = async (req, res) => {
-  const agreementId = req.params.agreementId;
+  const {agreementId} = req.params;
 
   if (!agreementId) {
     return res.status(400).json({ message: "Agreement ID is required" });
