@@ -19,7 +19,7 @@ export const getAgreementbyPfiId: RequestHandler = async (req, res) => {
   res.status(200).json(pfis);
 };
 
-export const registerDocument: RequestHandler = async (req, res) => {
+export const pfiDocuments: RequestHandler = async (req, res) => {
   const { documents } = req.body;
 
   if (!documents ) {

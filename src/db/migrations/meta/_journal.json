@@ -57,6 +57,13 @@
       "when": 1718355807967,
       "tag": "0007_cynical_tyger_tiger",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1718385944343,
+      "tag": "0008_fluffy_golden_guardian",
+      "breakpoints": true
     }
   ]
 }

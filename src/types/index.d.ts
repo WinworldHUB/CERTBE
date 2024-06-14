@@ -1,8 +1,8 @@
-export type User = {
+export type SignupRequest = {
   username: string;
-  parent_id: number;
-  role: string;
-  isPrimary: boolean;
+  parent_id?: number;
+  role?: string;
+  isPrimary?: boolean;
   email: string;
   phone: string;
   address: string;

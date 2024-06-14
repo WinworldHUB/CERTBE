@@ -7,9 +7,9 @@ const users = pgTable("users", {
   name: varchar("name", { length: 100 }).notNull(),
   email: varchar("email", { length: 100 }).notNull(),
   address: text("address").notNull(),
-  parentId: integer("parent_id").notNull(),
-  role: varchar("role", { length: 100 }).notNull(), // admin, pfi user, approver
-  isPrimary: boolean("is_primary").notNull().default(false),
+  parentId: integer("parent_id"),
+  role: varchar("role", { length: 100 }), // admin, pfi user, approver
+  isPrimary: boolean("is_primary").default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
   phoneNo: varchar("phone_no", { length: 15 }).notNull(),
