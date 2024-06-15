@@ -111,6 +111,26 @@ export const login: RequestHandler = async (req, res) => {
           ?.select()
           .from(users)
           .where(eq(users.email, email));
+
+          if(!storedUser[0].parentId) {
+
+            return res.status(404).json({
+              success: false,
+              message: "User not found",
+              session_duration: "",
+              session_token: "",
+              pfiId: "",
+              session_jwt: "",
+              fullName: "",
+            });
+          }
+          const storedPfi = await db
+          ?.select()
+          .from(pfi)
+          .where(eq(pfi.id, storedUser[0].parentId));
+
+          const pfiId = storedPfi[0].id;
+
         const userFullName = storedUser[0].fullName;
         return res.status(201).json({
           success: true,
@@ -119,6 +139,7 @@ export const login: RequestHandler = async (req, res) => {
           session_token: stytchresponse.session_token,
           session_jwt: stytchresponse.session_jwt,
           fullName: userFullName,
+          pfiId: pfiId,
         });
       }
     }
@@ -129,6 +150,7 @@ export const login: RequestHandler = async (req, res) => {
       error,
       session_duration: "",
       session_token: "",
+      pfiId: "",
       session_jwt: "",
       fullName: "",
     });
