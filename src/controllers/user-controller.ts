@@ -5,6 +5,9 @@ import { eq } from "drizzle-orm";
 import { LoginRequest, SignupRequest } from "../types";
 import stytchClient from "../stytchClient";
 import users from "../db/schema/user";
+import pfi from "../db/schema/pfi";
+import agreements from "../db/schema/agreements";
+import validateAgreement from "../utils/validateUserAgreement";
 export const fetchAllUsersFromEmail: RequestHandler = async (req, res) => {
   const { email } = req.params;
   if (!email) {
@@ -89,21 +92,34 @@ export const login: RequestHandler = async (req, res) => {
   }
 
   try {
-    const stytchresponse = await stytchClient.passwords.authenticate({
-      email: email,
-      password: password,
-      session_duration_minutes: 527040,
-    });
+    const validatedAgreement = await validateAgreement(email);
 
-    if (stytchresponse.status_code === 200) {
-      return res.status(201).json({
-        success: true,
-        message: "Logged In Successfully",
-        session_duration: "366 days",
-        session_token: stytchresponse.session_token,
-        session_jwt: stytchresponse.session_jwt,
-        fullName: stytchresponse.user.name,
+    if (!validatedAgreement.success) {
+      return res
+        .status(validatedAgreement.statusCode)
+        .json({
+          success: false,
+          data: null,
+          message: validatedAgreement.message,
+        });
+    }
+
+    if (validatedAgreement.success) {
+      const stytchresponse = await stytchClient.passwords.authenticate({
+        email: email,
+        password: password,
+        session_duration_minutes: 527040,
       });
+
+      if (stytchresponse.status_code === 200) {
+        return res.status(201).json({
+          success: true,
+          message: "Logged In Successfully",
+          session_duration: "366 days",
+          session_token: stytchresponse.session_token,
+          session_jwt: stytchresponse.session_jwt,
+        });
+      }
     }
   } catch (error) {
     return res

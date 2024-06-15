@@ -18,3 +18,10 @@ type PfiRequest = {
   name: string;
   address: string;
 };
+
+export interface ValidationResult {
+  success: boolean;
+  data: any;
+  message: string;
+  statusCode: number;
+}
