@@ -54,6 +54,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 session_duration: "366 days",
                 userFullName: userFullName,
                 pfiId: pfiId,
+                userRole: "USER",
                 session_token: stytchresponse.session_token,
                 session_jwt: stytchresponse.session_jwt,
             });
@@ -123,6 +124,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     session_token: stytchresponse.session_token,
                     session_jwt: stytchresponse.session_jwt,
                     fullName: userFullName,
+                    userRole: storedUser[0].role,
                     pfiId: pfiId,
                 });
             }
