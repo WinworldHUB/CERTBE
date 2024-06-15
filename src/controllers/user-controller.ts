@@ -31,3 +31,33 @@ export const fetchAllUsersFromPfi: RequestHandler = async (req, res) => {
 
   res.status(200).json(users);
 };
+
+export const approveUser: RequestHandler = async (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(400).json({
+      success: false,
+      message: "User id is required",
+    });
+  }
+  const parsedUserId = parseInt(userId);
+  try {
+    const updateUser = await db
+      ?.update(user)
+      .set({ isActive: true })
+      .where(eq(user.id, parsedUserId));
+    if (updateUser) {
+      return res.status(200).json({
+        success: true,
+        message: "User approved successfully",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+}

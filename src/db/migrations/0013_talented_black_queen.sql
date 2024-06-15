@@ -1,0 +1,1 @@
+ALTER TABLE "pfi" ADD COLUMN "is_active" boolean DEFAULT false;

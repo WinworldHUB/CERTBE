@@ -20,8 +20,22 @@ type PfiRequest = {
   address: string;
 };
 
-export interface ValidationResult {
+export type ValidationResult =  {
   isActive: boolean;
   message: string;
   statusCode: number;
+}
+
+export type AgreementRequest = {
+  pfiId: number; 
+  isActive?: boolean;
+  status?: string; 
+  agreementAmount: string; 
+  agreementPeriod: string; 
+  isPaid?: boolean; 
+  isApproved?: boolean; 
+  commencementDate?: Date; 
+  expiryDate?: Date; 
+  createdAt: Date;
+  updatedAt: Date;
 }

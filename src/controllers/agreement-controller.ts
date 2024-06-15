@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { RequestHandler } from "express";
 import agreements from "../db/schema/agreements";
 import { db } from "../db/setup";
+import { AgreementRequest } from "../types";
 
 export const getAgreementbyPfiId: RequestHandler = async (req, res) => {
   const { pfiId } = req.params;
@@ -33,6 +34,26 @@ export const approveAgreement: RequestHandler = async (req, res) => {
   res.status(200).json(updatedAgreement);
 };
 
+export const createAgreement: RequestHandler = async (req, res) => {
+  const {
+    pfiId,
+    agreementAmount,
+    agreementPeriod,
+  }: AgreementRequest = req.body;
+  if (!pfiId || !agreementAmount || !agreementPeriod) {
+    res.status(400).json({ error: "Agreement data is required" });
+    return;
+  }
+
+  const newAgreement = await db?.insert(agreements).values({
+    pfiId,
+    agreementAmount,
+    agreementPeriod,
+
+  });
+  res.status(201).json(newAgreement);
+};
+
 export const rejectAgreement: RequestHandler = async (req, res) => {
   const { agreementId } = req.params;
   if (!agreementId) {
@@ -62,3 +83,4 @@ export const approveAgreementPayment: RequestHandler = async (req, res) => {
     .where(eq(agreements.id, parsedAgreementId));
   res.status(200).json(updatedAgreement);
 };
+
