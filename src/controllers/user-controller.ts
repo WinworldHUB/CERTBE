@@ -122,7 +122,7 @@ export const login: RequestHandler = async (req, res) => {
           session_duration: "366 days",
           session_token: stytchresponse.session_token,
           session_jwt: stytchresponse.session_jwt,
-          userFullName: userFullName ,
+          fullName: userFullName ,
         });
       }
     }
