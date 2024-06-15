@@ -4,7 +4,7 @@ import pfi from "./pfi";
 
 const users = pgTable("users", {
   id: serial("id").primaryKey(),
-  name: varchar("name", { length: 100 }).notNull(),
+  fullName: varchar("fullName", { length: 100 }).notNull(),
   email: varchar("email", { length: 100 }).notNull(),
   parentId: integer("parent_id").references(() => pfi.id, {
     onDelete: "cascade",

@@ -78,6 +78,13 @@
       "when": 1718388729679,
       "tag": "0010_shiny_moira_mactaggert",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1718454758510,
+      "tag": "0011_red_gargoyle",
+      "breakpoints": true
     }
   ]
 }

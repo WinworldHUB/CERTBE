@@ -1,8 +1,8 @@
 import { Client } from 'stytch';
 
 const clientConfig = {
-  project_id: "project-test-ee62f45d-7120-4d8b-a543-42c2a11b6eaa",
-  secret: "secret-test-5ArzWGUn9gJNe0W3tvdQ2NMFozeCYRgP_gE=",
+  project_id: "project-test-f0efb7be-6ddc-4caa-9c4f-92cb4ddb2df3",
+  secret: "secret-test-Teh6wTBP-OS15QWcn4EnV_cHdwj-naPM_zA=",
 };
 
 const client = new Client(clientConfig);

@@ -5,8 +5,6 @@ import { eq } from "drizzle-orm";
 import { LoginRequest, SignupRequest } from "../types";
 import stytchClient from "../stytchClient";
 import users from "../db/schema/user";
-import pfi from "../db/schema/pfi";
-import agreements from "../db/schema/agreements";
 import validateAgreement from "../utils/validateUserAgreement";
 export const fetchAllUsersFromEmail: RequestHandler = async (req, res) => {
   const { email } = req.params;
@@ -47,9 +45,8 @@ export const signUp: RequestHandler = async (req, res) => {
   }
 
   try {
-    const name = fullName;
-    const first_name = name.split(" ")[0];
-    const last_name = name.split(" ")[1];
+    const first_name = fullName.split(" ")[0];
+    const last_name = fullName.split(" ")[1];
     const stytchresponse = await stytchClient.passwords.create({
       name: { first_name: first_name, last_name: last_name },
       email: email,
@@ -58,13 +55,20 @@ export const signUp: RequestHandler = async (req, res) => {
     });
 
     if (stytchresponse.status_code === 200) {
-      await db?.insert(users).values({
-        name,
-        email,
-        phoneNo: phone,
-        role: "USER",
-        isPrimary: true,
-      });
+      const storedUser = await db
+        ?.select()
+        .from(users)
+        .where(eq(users.email, email));
+
+        if(!storedUser){
+          await db?.insert(users).values({
+            fullName,
+            email,
+            phoneNo: phone,
+            role: "USER",
+            isPrimary: true,
+          });
+        }
       return res.status(201).json({
         success: true,
         data: { name, email },
@@ -95,13 +99,11 @@ export const login: RequestHandler = async (req, res) => {
     const validatedAgreement = await validateAgreement(email);
 
     if (!validatedAgreement.success) {
-      return res
-        .status(validatedAgreement.statusCode)
-        .json({
-          success: false,
-          data: null,
-          message: validatedAgreement.message,
-        });
+      return res.status(validatedAgreement.statusCode).json({
+        success: false,
+        data: null,
+        message: validatedAgreement.message,
+      });
     }
 
     if (validatedAgreement.success) {
@@ -112,12 +114,15 @@ export const login: RequestHandler = async (req, res) => {
       });
 
       if (stytchresponse.status_code === 200) {
+        const storedUser = await db?.select().from(users).where(eq(users.email, email));
+        const userFullName = storedUser[0].fullName;
         return res.status(201).json({
           success: true,
           message: "Logged In Successfully",
           session_duration: "366 days",
           session_token: stytchresponse.session_token,
           session_jwt: stytchresponse.session_jwt,
+          userFullName: userFullName ,
         });
       }
     }
