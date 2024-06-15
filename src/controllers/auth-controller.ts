@@ -58,6 +58,7 @@ export const register: RequestHandler = async (req, res) => {
         session_duration: "366 days",
         userFullName: userFullName,
         pfiId: pfiId,
+        userRole: "USER",
         session_token: stytchresponse.session_token,
         session_jwt: stytchresponse.session_jwt,
       });
@@ -141,6 +142,7 @@ export const login: RequestHandler = async (req, res) => {
           session_token: stytchresponse.session_token,
           session_jwt: stytchresponse.session_jwt,
           fullName: userFullName,
+          userRole: storedUser[0].role,
           pfiId: pfiId,
         });
       }
