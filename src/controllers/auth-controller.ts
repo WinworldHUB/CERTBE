@@ -50,7 +50,7 @@ export const register: RequestHandler = async (req, res) => {
         })
         .returning({ insertedId: pfi.id });
 
-        const pfiId = postPfi[0].insertedId;
+      const pfiId = postPfi[0].insertedId;
 
       return res.status(201).json({
         success: true,
@@ -84,8 +84,11 @@ export const login: RequestHandler = async (req, res) => {
     if (!validatedUser.isActive) {
       return res.status(validatedUser.statusCode).json({
         success: false,
-        data: null,
         message: validatedUser.message,
+        session_duration: "",
+        session_token: "",
+        session_jwt: "",
+        fullName: "",
       });
     }
 
@@ -115,6 +118,14 @@ export const login: RequestHandler = async (req, res) => {
   } catch (error) {
     return res
       .status(500)
-      .json({ success: false, data: null, message: "Unable to login", error });
+      .json({
+        success: false,
+        message: "Unable to login",
+        error,
+        session_duration: "",
+        session_token: "",
+        session_jwt: "",
+        fullName: "",
+      });
   }
 };
