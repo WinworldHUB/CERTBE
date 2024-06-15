@@ -13,11 +13,11 @@ export const getDocbyAgreementId: RequestHandler = async (req, res) => {
   }
 
   const parsedAgreementId = parseInt(agreementId);
-  const pfis = await db
+  const fetchedDocs = await db
     ?.select()
     .from(documents)
     .where(eq(documents.agreementId, parsedAgreementId));
-  res.status(200).json(pfis);
+  res.status(200).json(fetchedDocs);
 };
 
 export const pfiDocuments: RequestHandler = async (req, res) => {
