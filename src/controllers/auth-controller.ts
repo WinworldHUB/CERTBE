@@ -34,23 +34,25 @@ export const register: RequestHandler = async (req, res) => {
     });
 
     if (stytchresponse.status_code === 200) {
+      const postPfi = await db
+      ?.insert(pfi)
+      .values({
+        name: orgName,
+        address: address,
+      })
+      .returning({ insertedId: pfi.id });
+
+    const pfiId = postPfi[0].insertedId;
       await db?.insert(users).values({
         fullName: userFullName,
         email: email,
         phoneNo: phone,
         role: "USER",
         isPrimary: true,
+        parentId: pfiId,
       });
 
-      const postPfi = await db
-        ?.insert(pfi)
-        .values({
-          name: orgName,
-          address: address,
-        })
-        .returning({ insertedId: pfi.id });
 
-      const pfiId = postPfi[0].insertedId;
 
       return res.status(201).json({
         success: true,
@@ -119,7 +121,7 @@ export const login: RequestHandler = async (req, res) => {
 
             return res.status(404).json({
               success: false,
-              message: "User not found",
+              message: "PFI for this user not found",
               session_duration: "",
               session_token: "",
               pfiId: "",

@@ -36,18 +36,19 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             session_duration_minutes: 527040,
         });
         if (stytchresponse.status_code === 200) {
+            const postPfi = yield (setup_1.db === null || setup_1.db === void 0 ? void 0 : setup_1.db.insert(pfi_1.default).values({
+                name: orgName,
+                address: address,
+            }).returning({ insertedId: pfi_1.default.id }));
+            const pfiId = postPfi[0].insertedId;
             yield (setup_1.db === null || setup_1.db === void 0 ? void 0 : setup_1.db.insert(user_1.default).values({
                 fullName: userFullName,
                 email: email,
                 phoneNo: phone,
                 role: "USER",
                 isPrimary: true,
+                parentId: pfiId,
             }));
-            const postPfi = yield (setup_1.db === null || setup_1.db === void 0 ? void 0 : setup_1.db.insert(pfi_1.default).values({
-                name: orgName,
-                address: address,
-            }).returning({ insertedId: pfi_1.default.id }));
-            const pfiId = postPfi[0].insertedId;
             return res.status(201).json({
                 success: true,
                 message: "Added Successfully",
@@ -106,7 +107,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 if (!storedUser[0].parentId) {
                     return res.status(404).json({
                         success: false,
-                        message: "User not found",
+                        message: "PFI for this user not found",
                         session_duration: "",
                         session_token: "",
                         pfiId: "",
