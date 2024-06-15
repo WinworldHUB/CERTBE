@@ -77,6 +77,7 @@ export const login: RequestHandler = async (req, res) => {
       .status(400)
       .json({
         success: false,
+        pfiId:"",
         message: "All fields are required",
         session_duration: "",
         session_token: "",
@@ -91,6 +92,7 @@ export const login: RequestHandler = async (req, res) => {
     if (!validatedUser.isActive) {
       return res.status(validatedUser.statusCode).json({
         success: false,
+        pfiId:"",
         message: validatedUser.message,
         session_duration: "",
         session_token: "",
