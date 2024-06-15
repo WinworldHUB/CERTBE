@@ -11,6 +11,7 @@ const users = pgTable("users", {
   }),
   role: varchar("role", { length: 100 }), // admin, pfi user, approver
   isPrimary: boolean("is_primary").default(false),
+  isActive: boolean("is_active").default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
   phoneNo: varchar("phone_no", { length: 15 }).notNull(),

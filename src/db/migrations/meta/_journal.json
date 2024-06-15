@@ -85,6 +85,13 @@
       "when": 1718454758510,
       "tag": "0011_red_gargoyle",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1718474087226,
+      "tag": "0012_lonely_trish_tilby",
+      "breakpoints": true
     }
   ]
 }

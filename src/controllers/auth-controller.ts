@@ -4,7 +4,7 @@ import users from "../db/schema/user";
 import { db } from "../db/setup";
 import stytchClient from "../stytchClient";
 import { SignupRequest, LoginRequest } from "../types";
-import validateAgreement from "../utils/validateUserAgreement";
+import validateUser from "../utils/validateUser";
 import pfi from "../db/schema/pfi";
 
 export const register: RequestHandler = async (req, res) => {
@@ -79,17 +79,17 @@ export const login: RequestHandler = async (req, res) => {
   }
 
   try {
-    const validatedAgreement = await validateAgreement(email);
+    const validatedUser = await validateUser(email);
 
-    if (!validatedAgreement.success) {
-      return res.status(validatedAgreement.statusCode).json({
+    if (!validatedUser.isActive) {
+      return res.status(validatedUser.statusCode).json({
         success: false,
         data: null,
-        message: validatedAgreement.message,
+        message: validatedUser.message,
       });
     }
 
-    if (validatedAgreement.success) {
+    if (validatedUser.isActive) {
       const stytchresponse = await stytchClient.passwords.authenticate({
         email: email,
         password: password,

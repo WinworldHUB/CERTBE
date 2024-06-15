@@ -21,8 +21,7 @@ type PfiRequest = {
 };
 
 export interface ValidationResult {
-  success: boolean;
-  data: any;
+  isActive: boolean;
   message: string;
   statusCode: number;
 }
