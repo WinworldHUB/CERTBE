@@ -75,7 +75,14 @@ export const login: RequestHandler = async (req, res) => {
   if (!email || !password) {
     return res
       .status(400)
-      .json({ success: false, data: null, message: "All fields are required" });
+      .json({
+        success: false,
+        message: "All fields are required",
+        session_duration: "",
+        session_token: "",
+        session_jwt: "",
+        fullName: "",
+      });
   }
 
   try {
@@ -116,16 +123,14 @@ export const login: RequestHandler = async (req, res) => {
       }
     }
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: "Unable to login",
-        error,
-        session_duration: "",
-        session_token: "",
-        session_jwt: "",
-        fullName: "",
-      });
+    return res.status(500).json({
+      success: false,
+      message: "Unable to login",
+      error,
+      session_duration: "",
+      session_token: "",
+      session_jwt: "",
+      fullName: "",
+    });
   }
 };
