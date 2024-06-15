@@ -1,5 +1,6 @@
 export type SignupRequest = {
-  fullName: string;
+  orgName: string;
+  userFullName: string;
   parent_id?: number;
   role?: string;
   isPrimary?: boolean;

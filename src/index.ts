@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import userRouter from "./routes/user-routes";
 import pfiRouter from "./routes/pfi-routes";
 import documentRouter from "./routes/document-routes";
+import authRouter from "./routes/auth-routes";
 const app = express();
 const PORT = 3000;
 
@@ -40,7 +41,7 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/users", userRouter);
 app.use("/pfis", pfiRouter);
 app.use("/documents", documentRouter);
-
+app.use("/auth", authRouter);
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
