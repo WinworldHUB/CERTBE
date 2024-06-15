@@ -71,10 +71,9 @@ export const signUp: RequestHandler = async (req, res) => {
         }
       return res.status(201).json({
         success: true,
-        data: { name, email },
         message: "Added Successfully",
         session_duration: "366 days",
-        fullName: name,
+        fullName: fullName,
         session_token: stytchresponse.session_token,
         session_jwt: stytchresponse.session_jwt,
       });
