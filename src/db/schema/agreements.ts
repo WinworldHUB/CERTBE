@@ -19,6 +19,7 @@ const agreements = pgTable("agreements", {
     onDelete: "cascade",
   }),
   isActive: boolean("is_active").default(true),
+  agreementNumber: varchar("agreement_number").notNull(),
   status: varchar("status", { length: 20 }).default(AGREEMENT_STATUS.SUBMITTED),
   agreementAmount: decimal("agreement_amount").notNull(),
   agreementPeriod: varchar("agreement_period").notNull(),

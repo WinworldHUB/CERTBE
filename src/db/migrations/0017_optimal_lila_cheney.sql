@@ -1,0 +1,1 @@
+ALTER TABLE "agreements" ADD COLUMN "agreement_number" varchar NOT NULL;

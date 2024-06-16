@@ -18,6 +18,7 @@ const agreements_1 = __importDefault(require("../db/schema/agreements"));
 const setup_1 = require("../db/setup");
 const pfi_1 = __importDefault(require("../db/schema/pfi"));
 const documents_1 = __importDefault(require("../db/schema/documents"));
+const generateAgreementNumber_1 = __importDefault(require("../utils/generateAgreementNumber"));
 const getAllAgreements = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const fetchedAgreements = yield (setup_1.db === null || setup_1.db === void 0 ? void 0 : setup_1.db.select({
@@ -26,15 +27,14 @@ const getAllAgreements = (req, res) => __awaiter(void 0, void 0, void 0, functio
             orgName: pfi_1.default.name,
             status: agreements_1.default.status,
             orgAddress: pfi_1.default.address,
+            agreementNumber: agreements_1.default.agreementNumber,
             agreementAmount: agreements_1.default.agreementAmount,
             commencementDate: agreements_1.default.commencementDate,
             expiryDate: agreements_1.default.expiryDate,
             period: agreements_1.default.agreementPeriod,
         }).from(agreements_1.default).leftJoin(pfi_1.default, (0, drizzle_orm_1.eq)(agreements_1.default.pfiId, pfi_1.default.id)).where((0, drizzle_orm_1.eq)(agreements_1.default.isActive, true)));
         if (fetchedAgreements.length === 0) {
-            res
-                .status(200)
-                .json({
+            res.status(200).json({
                 success: true,
                 message: "No agreements found",
                 agreements: [],
@@ -63,6 +63,7 @@ const getAgreementbyPfiId = (req, res) => __awaiter(void 0, void 0, void 0, func
         agreementId: agreements_1.default.id,
         pfiId: agreements_1.default.pfiId,
         orgName: pfi_1.default.name,
+        agreementNumber: agreements_1.default.agreementNumber,
         orgAddress: pfi_1.default.address,
         agreementAmount: agreements_1.default.agreementAmount,
         commencementDate: agreements_1.default.commencementDate,
@@ -108,10 +109,12 @@ const createAgreement = (req, res) => __awaiter(void 0, void 0, void 0, function
         res.status(400).json({ error: "Agreement data is required" });
         return;
     }
+    const agreementNumber = (0, generateAgreementNumber_1.default)(commencementDate, pfiId);
     const newAgreement = yield (setup_1.db === null || setup_1.db === void 0 ? void 0 : setup_1.db.insert(agreements_1.default).values({
         pfiId,
+        agreementNumber: agreementNumber,
         agreementAmount,
-        agreementPeriod,
+        agreementPeriod: "1 year",
         commencementDate,
         expiryDate,
     }));

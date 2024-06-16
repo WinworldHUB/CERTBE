@@ -15,6 +15,7 @@ const agreements = (0, pg_core_1.pgTable)("agreements", {
         onDelete: "cascade",
     }),
     isActive: (0, pg_core_2.boolean)("is_active").default(true),
+    agreementNumber: (0, pg_core_1.varchar)("agreement_number").notNull(),
     status: (0, pg_core_1.varchar)("status", { length: 20 }).default(constants_1.AGREEMENT_STATUS.SUBMITTED),
     agreementAmount: (0, pg_core_1.decimal)("agreement_amount").notNull(),
     agreementPeriod: (0, pg_core_1.varchar)("agreement_period").notNull(),

@@ -1,0 +1,1 @@
+ALTER TABLE "agreements" ALTER COLUMN "agreement_number" DROP DEFAULT;

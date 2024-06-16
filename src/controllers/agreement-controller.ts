@@ -5,6 +5,7 @@ import { db } from "../db/setup";
 import { AgreementRequest } from "../types";
 import pfi from "../db/schema/pfi";
 import documents from "../db/schema/documents";
+import generateAgreementNumber from "../utils/generateAgreementNumber";
 
 export const getAllAgreements: RequestHandler = async (req, res) => {
   try {
@@ -15,6 +16,7 @@ export const getAllAgreements: RequestHandler = async (req, res) => {
         orgName: pfi.name,
         status: agreements.status,
         orgAddress: pfi.address,
+        agreementNumber: agreements.agreementNumber,
         agreementAmount: agreements.agreementAmount,
         commencementDate: agreements.commencementDate,
         expiryDate: agreements.expiryDate,
@@ -25,13 +27,11 @@ export const getAllAgreements: RequestHandler = async (req, res) => {
       .where(eq(agreements.isActive, true));
 
     if (fetchedAgreements.length === 0) {
-      res
-        .status(200)
-        .json({
-          success: true,
-          message: "No agreements found",
-          agreements: [],
-        });
+      res.status(200).json({
+        success: true,
+        message: "No agreements found",
+        agreements: [],
+      });
       return;
     }
 
@@ -53,11 +53,13 @@ export const getAgreementbyPfiId: RequestHandler = async (req, res) => {
   }
 
   const parsedPfiId = parseInt(pfiId);
+
   const fetchedAgreements = await db
     ?.select({
       agreementId: agreements.id,
       pfiId: agreements.pfiId,
       orgName: pfi.name,
+      agreementNumber: agreements.agreementNumber,
       orgAddress: pfi.address,
       agreementAmount: agreements.agreementAmount,
       commencementDate: agreements.commencementDate,
@@ -127,10 +129,13 @@ export const createAgreement: RequestHandler = async (req, res) => {
     return;
   }
 
+  const agreementNumber = generateAgreementNumber(commencementDate, pfiId);
+
   const newAgreement = await db?.insert(agreements).values({
     pfiId,
+    agreementNumber: agreementNumber,
     agreementAmount,
-    agreementPeriod,
+    agreementPeriod: "1 year",
     commencementDate,
     expiryDate,
   });
