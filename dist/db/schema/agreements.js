@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const pg_core_1 = require("drizzle-orm/pg-core");
 const pfi_1 = __importDefault(require("./pfi"));
 const pg_core_2 = require("drizzle-orm/pg-core");
+const constants_1 = require("../../constants");
 const agreements = (0, pg_core_1.pgTable)("agreements", {
     id: (0, pg_core_1.serial)("id").primaryKey(),
     pfiId: (0, pg_core_1.integer)("pfi_id")
@@ -14,7 +15,7 @@ const agreements = (0, pg_core_1.pgTable)("agreements", {
         onDelete: "cascade",
     }),
     isActive: (0, pg_core_2.boolean)("is_active").default(true),
-    status: (0, pg_core_1.varchar)("status", { length: 20 }),
+    status: (0, pg_core_1.varchar)("status", { length: 20 }).default(constants_1.AGREEMENT_STATUS.SUBMITTED),
     agreementAmount: (0, pg_core_1.decimal)("agreement_amount").notNull(),
     agreementPeriod: (0, pg_core_1.varchar)("agreement_period").notNull(),
     isPaid: (0, pg_core_2.boolean)("is_paid").default(false),

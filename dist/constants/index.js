@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getFullApiKey = exports.BREVO_CONFIG = void 0;
+exports.AGREEMENT_STATUS = exports.getFullApiKey = exports.BREVO_CONFIG = void 0;
 exports.BREVO_CONFIG = {
     API_KEY_PREFIX: "xkeysib",
     API_KEY_MAJOR: "-e8a0391fb166701a2e742c9dc85c54555d-d29721263b30829f5655a2cf32c513-",
@@ -10,3 +10,11 @@ const getFullApiKey = () => {
     return `${exports.BREVO_CONFIG.API_KEY_PREFIX}${exports.BREVO_CONFIG.API_KEY_MAJOR}${exports.BREVO_CONFIG.API_KEY_MINOR}`;
 };
 exports.getFullApiKey = getFullApiKey;
+var AGREEMENT_STATUS;
+(function (AGREEMENT_STATUS) {
+    AGREEMENT_STATUS["SUBMITTED"] = "SUBMITTED";
+    AGREEMENT_STATUS["RESPONSE_REQUESTED"] = "RESPONSE_REQUESTED";
+    AGREEMENT_STATUS["PAYMENT_REQUESTED"] = "PAYMENT_REQUESTED";
+    AGREEMENT_STATUS["APPROVED"] = "APPROVED";
+    AGREEMENT_STATUS["REJECTED"] = "REJECTED";
+})(AGREEMENT_STATUS || (exports.AGREEMENT_STATUS = AGREEMENT_STATUS = {}));

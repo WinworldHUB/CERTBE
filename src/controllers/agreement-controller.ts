@@ -6,6 +6,45 @@ import { AgreementRequest } from "../types";
 import pfi from "../db/schema/pfi";
 import documents from "../db/schema/documents";
 
+export const getAllAgreements: RequestHandler = async (req, res) => {
+  try {
+    const fetchedAgreements = await db
+      ?.select({
+        agreementId: agreements.id,
+        pfiId: agreements.pfiId,
+        orgName: pfi.name,
+        status: agreements.status,
+        orgAddress: pfi.address,
+        agreementAmount: agreements.agreementAmount,
+        commencementDate: agreements.commencementDate,
+        expiryDate: agreements.expiryDate,
+        period: agreements.agreementPeriod,
+      })
+      .from(agreements)
+      .leftJoin(pfi, eq(agreements.pfiId, pfi.id))
+      .where(eq(agreements.isActive, true));
+
+    if (fetchedAgreements.length === 0) {
+      res
+        .status(200)
+        .json({
+          success: true,
+          message: "No agreements found",
+          agreements: [],
+        });
+      return;
+    }
+
+    res.status(200).json({
+      success: true,
+      agreements: fetchedAgreements ?? [],
+      message: "Agreements fetched successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error, agreements: [] });
+  }
+};
+
 export const getAgreementbyPfiId: RequestHandler = async (req, res) => {
   const { pfiId } = req.params;
   if (!pfiId) {

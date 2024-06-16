@@ -9,6 +9,7 @@ import {
 } from "drizzle-orm/pg-core";
 import pfi from "./pfi";
 import { boolean } from "drizzle-orm/pg-core";
+import { AGREEMENT_STATUS } from "../../constants";
 
 const agreements = pgTable("agreements", {
   id: serial("id").primaryKey(),
@@ -18,7 +19,7 @@ const agreements = pgTable("agreements", {
     onDelete: "cascade",
   }),
   isActive: boolean("is_active").default(true),
-  status: varchar("status", { length: 20 }),
+  status: varchar("status", { length: 20 }).default(AGREEMENT_STATUS.SUBMITTED),
   agreementAmount: decimal("agreement_amount").notNull(),
   agreementPeriod: varchar("agreement_period").notNull(),
   isPaid: boolean("is_paid").default(false),
