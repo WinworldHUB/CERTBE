@@ -6,6 +6,7 @@ import stytchClient from "../stytchClient";
 import { SignupRequest, LoginRequest } from "../types";
 import validateUser from "../utils/validateUser";
 import pfi from "../db/schema/pfi";
+import sendWelcomeEmail from "../emails/welcome-email";
 
 export const register: RequestHandler = async (req, res) => {
   const {
@@ -35,14 +36,15 @@ export const register: RequestHandler = async (req, res) => {
 
     if (stytchresponse.status_code === 200) {
       const postPfi = await db
-      ?.insert(pfi)
-      .values({
-        name: orgName,
-        address: address,
-      })
-      .returning({ insertedId: pfi.id });
+        ?.insert(pfi)
+        .values({
+          name: orgName,
+          address: address,
+        })
+        .returning({ insertedId: pfi.id });
 
-    const pfiId = postPfi[0].insertedId;
+      const pfiId = postPfi[0].insertedId;
+
       await db?.insert(users).values({
         fullName: userFullName,
         email: email,
@@ -51,8 +53,6 @@ export const register: RequestHandler = async (req, res) => {
         isPrimary: true,
         parentId: pfiId,
       });
-
-
 
       return res.status(201).json({
         success: true,
@@ -76,17 +76,15 @@ export const login: RequestHandler = async (req, res) => {
   const { email, password }: LoginRequest = req.body;
 
   if (!email || !password) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        pfiId:"",
-        message: "All fields are required",
-        session_duration: "",
-        session_token: "",
-        session_jwt: "",
-        fullName: "",
-      });
+    return res.status(400).json({
+      success: false,
+      pfiId: "",
+      message: "All fields are required",
+      session_duration: "",
+      session_token: "",
+      session_jwt: "",
+      fullName: "",
+    });
   }
 
   try {
@@ -95,7 +93,7 @@ export const login: RequestHandler = async (req, res) => {
     if (!validatedUser.isActive) {
       return res.status(validatedUser.statusCode).json({
         success: false,
-        pfiId:"",
+        pfiId: "",
         message: validatedUser.message,
         session_duration: "",
         session_token: "",
@@ -117,24 +115,23 @@ export const login: RequestHandler = async (req, res) => {
           .from(users)
           .where(eq(users.email, email));
 
-          if(!storedUser[0].parentId) {
-
-            return res.status(404).json({
-              success: false,
-              message: "PFI for this user not found",
-              session_duration: "",
-              session_token: "",
-              pfiId: "",
-              session_jwt: "",
-              fullName: "",
-            });
-          }
-          const storedPfi = await db
+        if (!storedUser[0].parentId) {
+          return res.status(404).json({
+            success: false,
+            message: "PFI for this user not found",
+            session_duration: "",
+            session_token: "",
+            pfiId: "",
+            session_jwt: "",
+            fullName: "",
+          });
+        }
+        const storedPfi = await db
           ?.select()
           .from(pfi)
           .where(eq(pfi.id, storedUser[0].parentId));
 
-          const pfiId = storedPfi[0].id;
+        const pfiId = storedPfi[0].id;
 
         const userFullName = storedUser[0].fullName;
         return res.status(201).json({

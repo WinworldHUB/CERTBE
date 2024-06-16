@@ -17,6 +17,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@getbrevo/brevo": "^2.1.1",
     "aws-sdk": "^2.1641.0",
     "drizzle-kit": "^0.21.4",
     "drizzle-orm": "^0.30.10",
