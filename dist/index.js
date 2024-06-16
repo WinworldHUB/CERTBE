@@ -19,6 +19,7 @@ app.use((req, res, next) => {
         "http://localhost:3002",
         "http://localhost:3001",
         "http://localhost:3000",
+        "https://zcgs.netlify.app"
     ];
     const origin = (_a = req.headers.origin) !== null && _a !== void 0 ? _a : "";
     if (allowedOrigins.includes(origin)) {
