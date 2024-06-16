@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import user from "../db/schema/user";
 import { db } from "../db/setup";
 import { eq } from "drizzle-orm";
+import pfi from "../db/schema/pfi";
 export const fetchAllUsersFromEmail: RequestHandler = async (req, res) => {
   const { email } = req.params;
   if (!email) {
@@ -60,4 +61,28 @@ export const approveUser: RequestHandler = async (req, res) => {
       message: "Internal server error",
     });
   }
-}
+};
+
+export const fetchInactiveUsersAndPfi: RequestHandler = async (req, res) => {
+  try {
+    console.log('Fetching inactive users...');
+    const users = await db.select().from(user).where(eq(user.isActive, false));
+    console.log('Inactive users:', users);
+
+    if (users.length === 0) {
+      return res.status(404).json({ success: false, message: "No inactive users found" });
+    }
+
+    console.log('Fetching inactive PFIs...');
+    const pfis = await db.select().from(pfi).where(eq(pfi.isActive, false));
+    console.log('Inactive PFIs:', pfis);
+
+    if (pfis.length === 0) {
+      return res.status(404).json({ success: false, message: "No inactive PFIs found" });
+    }
+
+    return res.status(200).json({ success: true, users: users, pfis: pfis });
+  } catch (error) {
+    console.error("Error fetching inactive users and PFIs:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }};

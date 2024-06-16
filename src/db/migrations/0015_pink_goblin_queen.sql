@@ -1,0 +1,1 @@
+ALTER TABLE "documents" ALTER COLUMN "url" SET DATA TYPE text;

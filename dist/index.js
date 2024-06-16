@@ -8,6 +8,7 @@ const user_routes_1 = __importDefault(require("./routes/user-routes"));
 const pfi_routes_1 = __importDefault(require("./routes/pfi-routes"));
 const document_routes_1 = __importDefault(require("./routes/document-routes"));
 const auth_routes_1 = __importDefault(require("./routes/auth-routes"));
+const upload_middleware_1 = __importDefault(require("./middleware/upload-middleware"));
 const app = (0, express_1.default)();
 const PORT = 3000;
 app.use(express_1.default.json({ limit: "10mb" }));
@@ -38,6 +39,15 @@ app.use("/users", user_routes_1.default);
 app.use("/pfis", pfi_routes_1.default);
 app.use("/documents", document_routes_1.default);
 app.use("/auth", auth_routes_1.default);
+app.post('/test-upload', (req, res, next) => {
+    console.log('Headers:', req.headers);
+    console.log('Content-Type:', req.headers['content-type']);
+    next();
+}, upload_middleware_1.default.array('files', 4), (req, res) => {
+    console.log('Files received:', req.files); // Should log the received files
+    console.log('Body received:', req.body); // Should log the request body
+    res.status(200).json({ message: 'Files uploaded successfully', files: req.files });
+});
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

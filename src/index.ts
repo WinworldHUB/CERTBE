@@ -3,6 +3,7 @@ import userRouter from "./routes/user-routes";
 import pfiRouter from "./routes/pfi-routes";
 import documentRouter from "./routes/document-routes";
 import authRouter from "./routes/auth-routes";
+import upload from "./middleware/upload-middleware";
 const app = express();
 const PORT = 3000;
 
@@ -42,6 +43,17 @@ app.use("/users", userRouter);
 app.use("/pfis", pfiRouter);
 app.use("/documents", documentRouter);
 app.use("/auth", authRouter);
+
+app.post('/test-upload', (req, res, next) => {
+  console.log('Headers:', req.headers);
+  console.log('Content-Type:', req.headers['content-type']);
+  next();
+}, upload.array('files', 4), (req, res) => {
+  console.log('Files received:', req.files); // Should log the received files
+  console.log('Body received:', req.body); // Should log the request body
+  res.status(200).json({ message: 'Files uploaded successfully', files: req.files });
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
