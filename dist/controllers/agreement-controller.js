@@ -114,9 +114,11 @@ const createAgreement = (req, res) => __awaiter(void 0, void 0, void 0, function
         });
     }
     try {
-        console.log("Generating agreement number");
         const agreementNumber = (0, generateAgreementNumber_1.default)(new Date(commencementDate), pfiId);
-        console.log("Inserting agreement into database");
+        const storedAgreements = yield (setup_1.db === null || setup_1.db === void 0 ? void 0 : setup_1.db.select().from(agreements_1.default).where((0, drizzle_orm_1.eq)(agreements_1.default.pfiId, pfiId)));
+        if (storedAgreements.length > 0) {
+            yield (setup_1.db === null || setup_1.db === void 0 ? void 0 : setup_1.db.update(agreements_1.default).set({ isActive: false }).where((0, drizzle_orm_1.eq)(agreements_1.default.pfiId, pfiId)));
+        }
         const newAgreement = yield setup_1.db
             .insert(agreements_1.default)
             .values({
@@ -124,8 +126,9 @@ const createAgreement = (req, res) => __awaiter(void 0, void 0, void 0, function
             agreementNumber,
             agreementAmount,
             agreementPeriod,
-            commencementDate: new Date(commencementDate),
-            expiryDate: new Date(expiryDate),
+            commencementDate: commencementDate,
+            expiryDate: expiryDate,
+            isActive: true,
         })
             .returning({
             agreementId: agreements_1.default.id,
@@ -138,14 +141,12 @@ const createAgreement = (req, res) => __awaiter(void 0, void 0, void 0, function
             agreementStatus: agreements_1.default.status,
         });
         if (!newAgreement) {
-            console.log("Agreement creation failed");
             return res.status(400).json({
                 success: false,
                 message: "Agreement creation failed",
                 agreement: {},
             });
         }
-        console.log("Agreement created successfully");
         res.status(201).json({
             success: true,
             message: "Agreement created successfully",

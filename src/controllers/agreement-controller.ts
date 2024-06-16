@@ -134,12 +134,23 @@ export const createAgreement: RequestHandler = async (req, res) => {
   }
 
   try {
-    console.log("Generating agreement number");
     const agreementNumber = generateAgreementNumber(
       new Date(commencementDate),
       pfiId
     );
-    console.log("Inserting agreement into database");
+
+    const storedAgreements = await db
+      ?.select()
+      .from(agreements)
+      .where(eq(agreements.pfiId, pfiId));
+
+    if (storedAgreements.length > 0) {
+      await db
+        ?.update(agreements)
+        .set({ isActive: false })
+        .where(eq(agreements.pfiId, pfiId));
+    }
+
     const newAgreement = await db
       .insert(agreements)
       .values({
@@ -147,8 +158,9 @@ export const createAgreement: RequestHandler = async (req, res) => {
         agreementNumber,
         agreementAmount,
         agreementPeriod,
-        commencementDate: new Date(commencementDate),
-        expiryDate: new Date(expiryDate),
+        commencementDate: commencementDate,
+        expiryDate: expiryDate,
+        isActive: true,
       })
       .returning({
         agreementId: agreements.id,
@@ -162,7 +174,6 @@ export const createAgreement: RequestHandler = async (req, res) => {
       });
 
     if (!newAgreement) {
-      console.log("Agreement creation failed");
       return res.status(400).json({
         success: false,
         message: "Agreement creation failed",
@@ -170,7 +181,6 @@ export const createAgreement: RequestHandler = async (req, res) => {
       });
     }
 
-    console.log("Agreement created successfully");
     res.status(201).json({
       success: true,
       message: "Agreement created successfully",
@@ -181,6 +191,7 @@ export const createAgreement: RequestHandler = async (req, res) => {
     res.status(500).json({ success: false, message: error, agreement: {} });
   }
 };
+
 
 export const rejectAgreement: RequestHandler = async (req, res) => {
   const { agreementId } = req.params;
