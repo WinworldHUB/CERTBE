@@ -114,7 +114,7 @@ const createAgreement = (req, res) => __awaiter(void 0, void 0, void 0, function
         pfiId,
         agreementNumber: agreementNumber,
         agreementAmount,
-        agreementPeriod: "1 year",
+        agreementPeriod: agreementPeriod,
         commencementDate,
         expiryDate,
     }));

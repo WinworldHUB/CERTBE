@@ -135,7 +135,7 @@ export const createAgreement: RequestHandler = async (req, res) => {
     pfiId,
     agreementNumber: agreementNumber,
     agreementAmount,
-    agreementPeriod: "1 year",
+    agreementPeriod: agreementPeriod,
     commencementDate,
     expiryDate,
   });
