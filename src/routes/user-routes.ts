@@ -6,6 +6,6 @@ const userRouter = Router();
 userRouter.get("/pending",fetchInactiveUsersAndPfi)
 userRouter.get("/user/:email",fetchAllUsersFromEmail);
 userRouter.get("/pfi/:parentId",fetchAllUsersFromPfi);
-userRouter.put("/approve/:userId",approveUser);
+userRouter.put("/approve",approveUser);
 
 export default userRouter;

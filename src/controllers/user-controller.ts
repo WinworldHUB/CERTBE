@@ -34,7 +34,7 @@ export const fetchAllUsersFromPfi: RequestHandler = async (req, res) => {
 };
 
 export const approveUser: RequestHandler = async (req, res) => {
-  const { userId } = req.params;
+  const { userId, pfiId } = req.body;
 
   if (!userId) {
     return res.status(400).json({
@@ -42,20 +42,46 @@ export const approveUser: RequestHandler = async (req, res) => {
       message: "User id is required",
     });
   }
+
+  if (!pfiId) {
+    return res.status(400).json({
+      success: false,
+      message: "Pfi id is required",
+    });
+  }
+
   const parsedUserId = parseInt(userId);
+  const parsedPfiId = parseInt(pfiId);
+
   try {
-    const updateUser = await db
+    const updateUserPromise = db
       ?.update(user)
       .set({ isActive: true })
       .where(eq(user.id, parsedUserId));
-    if (updateUser) {
+
+    const updatePfiPromise = db
+      ?.update(pfi)
+      .set({ isActive: true })
+      .where(eq(pfi.id, parsedPfiId));
+
+    // Run both update operations concurrently
+    const [updateUserResult, updatePfiResult] = await Promise.all([
+      updateUserPromise,
+      updatePfiPromise,
+    ]);
+
+    if (updateUserResult && updatePfiResult) {
       return res.status(200).json({
         success: true,
-        message: "User approved successfully",
+        message: "User and PFI approved successfully",
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "User or PFI not found",
       });
     }
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       success: false,
       message: "Internal server error",
@@ -83,8 +109,8 @@ export const fetchInactiveUsersAndPfi: RequestHandler = async (req, res) => {
         .status(404)
         .json({ success: false, message: "No inactive users found" });
     }
- 
-    return res.status(200).json({ success: true, user: users});
+
+    return res.status(200).json({ success: true, user: users });
   } catch (error) {
     console.error("Error fetching inactive users and PFIs:", error);
     return res

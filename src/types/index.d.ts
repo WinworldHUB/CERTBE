@@ -39,3 +39,8 @@ export type AgreementRequest = {
   createdAt: Date;
   updatedAt: Date;
 }
+
+interface ApproveRegistrationRequest {
+  userId: number;
+  pfiId: number;
+}

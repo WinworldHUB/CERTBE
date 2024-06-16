@@ -6,5 +6,5 @@ const userRouter = (0, express_1.Router)();
 userRouter.get("/pending", user_controller_1.fetchInactiveUsersAndPfi);
 userRouter.get("/user/:email", user_controller_1.fetchAllUsersFromEmail);
 userRouter.get("/pfi/:parentId", user_controller_1.fetchAllUsersFromPfi);
-userRouter.put("/approve/:userId", user_controller_1.approveUser);
+userRouter.put("/approve", user_controller_1.approveUser);
 exports.default = userRouter;

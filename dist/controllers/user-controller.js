@@ -40,25 +40,55 @@ const fetchAllUsersFromPfi = (req, res) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.fetchAllUsersFromPfi = fetchAllUsersFromPfi;
 const approveUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { userId } = req.params;
+    const { userId, pfiId } = req.body;
     if (!userId) {
         return res.status(400).json({
             success: false,
             message: "User id is required",
         });
     }
+    if (!pfiId) {
+        return res.status(400).json({
+            success: false,
+            message: "Pfi id is required",
+        });
+    }
     const parsedUserId = parseInt(userId);
+    const parsedPfiId = parseInt(pfiId);
     try {
-        const updateUser = yield (setup_1.db === null || setup_1.db === void 0 ? void 0 : setup_1.db.update(user_1.default).set({ isActive: true }).where((0, drizzle_orm_1.eq)(user_1.default.id, parsedUserId)));
-        if (updateUser) {
+        const updateUserPromise = setup_1.db === null || setup_1.db === void 0 ? void 0 : setup_1.db.update(user_1.default).set({ isActive: true }).where((0, drizzle_orm_1.eq)(user_1.default.id, parsedUserId));
+        const updatePfiPromise = setup_1.db === null || setup_1.db === void 0 ? void 0 : setup_1.db.update(pfi_1.default).set({ isActive: true }).where((0, drizzle_orm_1.eq)(pfi_1.default.id, parsedPfiId));
+        // Run both update operations concurrently
+        const [updateUserResult, updatePfiResult] = yield Promise.all([
+            updateUserPromise,
+            updatePfiPromise,
+        ]);
+        if (updateUserResult && updatePfiResult) {
             return res.status(200).json({
                 success: true,
-                message: "User approved successfully",
+                message: "User and PFI approved successfully",
+            });
+        }
+        else if (updateUserResult) {
+            return res.status(200).json({
+                success: true,
+                message: "User approved successfully, but PFI update failed",
+            });
+        }
+        else if (updatePfiResult) {
+            return res.status(200).json({
+                success: true,
+                message: "PFI approved successfully, but user update failed",
+            });
+        }
+        else {
+            return res.status(404).json({
+                success: false,
+                message: "User or PFI not found",
             });
         }
     }
     catch (error) {
-        console.log(error);
         return res.status(500).json({
             success: false,
             message: "Internal server error",
