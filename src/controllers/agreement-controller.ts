@@ -1,8 +1,10 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { RequestHandler } from "express";
 import agreements from "../db/schema/agreements";
 import { db } from "../db/setup";
 import { AgreementRequest } from "../types";
+import pfi from "../db/schema/pfi";
+import documents from "../db/schema/documents";
 
 export const getAgreementbyPfiId: RequestHandler = async (req, res) => {
   const { pfiId } = req.params;
@@ -12,11 +14,44 @@ export const getAgreementbyPfiId: RequestHandler = async (req, res) => {
   }
 
   const parsedPfiId = parseInt(pfiId);
-  const pfis = await db
-    ?.select()
+  const fetchedAgreements = await db
+    ?.select({
+      agreementId: agreements.id,
+      pfiId: agreements.pfiId,
+      orgName: pfi.name,
+      orgAddress: pfi.address,
+      agreementAmount: agreements.agreementAmount,
+      commencementDate: agreements.commencementDate,
+      expiryDate: agreements.expiryDate,
+      period: agreements.agreementPeriod,
+    })
     .from(agreements)
-    .where(eq(agreements.pfiId, parsedPfiId));
-  res.status(200).json(pfis);
+    .leftJoin(pfi, eq(agreements.pfiId, parsedPfiId))
+    .where(
+      and(eq(agreements.pfiId, parsedPfiId), eq(agreements.isActive, true))
+    );
+
+  if (fetchedAgreements.length === 0) {
+    res
+      .status(404)
+      .json({ success: false, message: "No agreement found for this PFI" });
+    return;
+  }
+
+  const storedDocuments = await db
+    ?.select({
+      documentId: documents.id,
+      documentName: documents.name,
+      documentUrl: documents.url,
+    })
+    .from(documents)
+    .where(eq(documents.agreementId, fetchedAgreements[0].agreementId));
+
+  res.status(200).json({
+    success: true,
+    agreement: fetchedAgreements[0],
+    documents: storedDocuments ?? [],
+  });
 };
 
 export const approveAgreement: RequestHandler = async (req, res) => {
@@ -40,9 +75,15 @@ export const createAgreement: RequestHandler = async (req, res) => {
     agreementAmount,
     agreementPeriod,
     commencementDate,
-    expiryDate
+    expiryDate,
   }: AgreementRequest = req.body;
-  if (!pfiId || !agreementAmount || !agreementPeriod || !commencementDate || !expiryDate) {
+  if (
+    !pfiId ||
+    !agreementAmount ||
+    !agreementPeriod ||
+    !commencementDate ||
+    !expiryDate
+  ) {
     res.status(400).json({ error: "Agreement data is required" });
     return;
   }
@@ -52,8 +93,7 @@ export const createAgreement: RequestHandler = async (req, res) => {
     agreementAmount,
     agreementPeriod,
     commencementDate,
-    expiryDate
-
+    expiryDate,
   });
   res.status(201).json(newAgreement);
 };
@@ -87,4 +127,3 @@ export const approveAgreementPayment: RequestHandler = async (req, res) => {
     .where(eq(agreements.id, parsedAgreementId));
   res.status(200).json(updatedAgreement);
 };
-

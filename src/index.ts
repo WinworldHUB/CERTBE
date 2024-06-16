@@ -4,6 +4,7 @@ import pfiRouter from "./routes/pfi-routes";
 import documentRouter from "./routes/document-routes";
 import authRouter from "./routes/auth-routes";
 import upload from "./middleware/upload-middleware";
+import agreementRouter from "./routes/agreement-routes";
 const app = express();
 const PORT = 3000;
 
@@ -42,6 +43,7 @@ app.get("/", (req: Request, res: Response) => {
 
 app.use("/users", userRouter);
 app.use("/pfis", pfiRouter);
+app.use("/agreements", agreementRouter);
 app.use("/documents", documentRouter);
 app.use("/auth", authRouter);
 

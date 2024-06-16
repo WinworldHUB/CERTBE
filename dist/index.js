@@ -9,6 +9,7 @@ const pfi_routes_1 = __importDefault(require("./routes/pfi-routes"));
 const document_routes_1 = __importDefault(require("./routes/document-routes"));
 const auth_routes_1 = __importDefault(require("./routes/auth-routes"));
 const upload_middleware_1 = __importDefault(require("./middleware/upload-middleware"));
+const agreement_routes_1 = __importDefault(require("./routes/agreement-routes"));
 const app = (0, express_1.default)();
 const PORT = 3000;
 app.use(express_1.default.json({ limit: "10mb" }));
@@ -38,6 +39,7 @@ app.get("/", (req, res) => {
 });
 app.use("/users", user_routes_1.default);
 app.use("/pfis", pfi_routes_1.default);
+app.use("/agreements", agreement_routes_1.default);
 app.use("/documents", document_routes_1.default);
 app.use("/auth", auth_routes_1.default);
 app.post('/test-upload', (req, res, next) => {

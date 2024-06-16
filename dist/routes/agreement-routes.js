@@ -7,3 +7,4 @@ agreementRouter.get("/pfi/:pfiId", agreement_controller_1.getAgreementbyPfiId);
 agreementRouter.post("/create", agreement_controller_1.createAgreement);
 agreementRouter.put("/approve/:agreementId", agreement_controller_1.approveAgreement);
 agreementRouter.put("/reject/:agreementId", agreement_controller_1.rejectAgreement);
+exports.default = agreementRouter;
