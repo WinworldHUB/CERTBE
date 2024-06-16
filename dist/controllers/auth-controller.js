@@ -118,7 +118,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                         session_jwt: "",
                         fullName: "",
                         orgName: "",
-                        orgAdress: "",
+                        orgAddress: "",
                     });
                 }
                 return res.status(201).json({
@@ -131,7 +131,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     userRole: storedUser[0].role,
                     pfiId: storedUser[0].pfiId,
                     orgName: storedUser[0].orgName,
-                    orgAdress: storedUser[0].orgAddress,
+                    orgAddress: storedUser[0].orgAddress,
                 });
             }
         }
@@ -147,7 +147,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             session_jwt: "",
             fullName: "",
             orgName: "",
-            orgAdress: "",
+            orgAddress: "",
         });
     }
 });

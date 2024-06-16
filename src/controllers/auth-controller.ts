@@ -132,7 +132,7 @@ export const login: RequestHandler = async (req, res) => {
             session_jwt: "",
             fullName: "",
             orgName: "",
-            orgAdress: "",
+            orgAddress: "",
           });
         }
   
@@ -147,7 +147,7 @@ export const login: RequestHandler = async (req, res) => {
           userRole: storedUser[0].role,
           pfiId: storedUser[0].pfiId,
           orgName: storedUser[0].orgName,
-          orgAdress: storedUser[0].orgAddress,
+          orgAddress: storedUser[0].orgAddress,
         });
       }
     }
@@ -162,7 +162,7 @@ export const login: RequestHandler = async (req, res) => {
       session_jwt: "",
       fullName: "",
       orgName: "",
-      orgAdress: "",
+      orgAddress: "",
     });
   }
 };
