@@ -69,18 +69,6 @@ const approveUser = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 message: "User and PFI approved successfully",
             });
         }
-        else if (updateUserResult) {
-            return res.status(200).json({
-                success: true,
-                message: "User approved successfully, but PFI update failed",
-            });
-        }
-        else if (updatePfiResult) {
-            return res.status(200).json({
-                success: true,
-                message: "PFI approved successfully, but user update failed",
-            });
-        }
         else {
             return res.status(404).json({
                 success: false,
@@ -112,8 +100,8 @@ const fetchInactiveUsersAndPfi = (req, res) => __awaiter(void 0, void 0, void 0,
             .where((0, drizzle_orm_1.eq)(user_1.default.isActive, false));
         if (users.length === 0) {
             return res
-                .status(404)
-                .json({ success: false, message: "No inactive users found" });
+                .status(200)
+                .json({ success: false, user: [] });
         }
         return res.status(200).json({ success: true, user: users });
     }
