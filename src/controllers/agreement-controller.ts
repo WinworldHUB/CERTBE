@@ -118,28 +118,43 @@ export const createAgreement: RequestHandler = async (req, res) => {
     commencementDate,
     expiryDate,
   }: AgreementRequest = req.body;
-  if (
-    !pfiId ||
-    !agreementAmount ||
-    !agreementPeriod ||
-    !commencementDate ||
-    !expiryDate
-  ) {
-    res.status(400).json({ error: "Agreement data is required" });
-    return;
+  try {
+    if (
+      !pfiId ||
+      !agreementAmount ||
+      !agreementPeriod ||
+      !commencementDate ||
+      !expiryDate
+    ) {
+      res.status(400).json({success:false , error: "Agreement data is required", agreement: {}});
+      return;
+    }
+  
+    const agreementNumber = generateAgreementNumber(commencementDate, pfiId);
+  
+    const newAgreement = await db?.insert(agreements).values({
+      pfiId,
+      agreementNumber: agreementNumber,
+      agreementAmount,
+      agreementPeriod: agreementPeriod,
+      commencementDate,
+      expiryDate,
+    });
+    res
+      .status(201)
+      .json({
+        success: true,
+        message: "Agreement created successfully",
+        agreement: newAgreement,
+      });
+
+      if (!newAgreement) {
+        res.status(400).json({ success: false, message: "Agreement creation failed", agreement: {} });
+        return;
+      }
+  } catch (error) {
+    res.status(500).json({ success: false, message: error, agreement: {}});
   }
-
-  const agreementNumber = generateAgreementNumber(commencementDate, pfiId);
-
-  const newAgreement = await db?.insert(agreements).values({
-    pfiId,
-    agreementNumber: agreementNumber,
-    agreementAmount,
-    agreementPeriod: agreementPeriod,
-    commencementDate,
-    expiryDate,
-  });
-  res.status(201).json(newAgreement);
 };
 
 export const rejectAgreement: RequestHandler = async (req, res) => {

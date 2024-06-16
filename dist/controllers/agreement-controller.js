@@ -101,24 +101,39 @@ const approveAgreement = (req, res) => __awaiter(void 0, void 0, void 0, functio
 exports.approveAgreement = approveAgreement;
 const createAgreement = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { pfiId, agreementAmount, agreementPeriod, commencementDate, expiryDate, } = req.body;
-    if (!pfiId ||
-        !agreementAmount ||
-        !agreementPeriod ||
-        !commencementDate ||
-        !expiryDate) {
-        res.status(400).json({ error: "Agreement data is required" });
-        return;
+    try {
+        if (!pfiId ||
+            !agreementAmount ||
+            !agreementPeriod ||
+            !commencementDate ||
+            !expiryDate) {
+            res.status(400).json({ success: false, error: "Agreement data is required", agreement: {} });
+            return;
+        }
+        const agreementNumber = (0, generateAgreementNumber_1.default)(commencementDate, pfiId);
+        const newAgreement = yield (setup_1.db === null || setup_1.db === void 0 ? void 0 : setup_1.db.insert(agreements_1.default).values({
+            pfiId,
+            agreementNumber: agreementNumber,
+            agreementAmount,
+            agreementPeriod: agreementPeriod,
+            commencementDate,
+            expiryDate,
+        }));
+        res
+            .status(201)
+            .json({
+            success: true,
+            message: "Agreement created successfully",
+            agreement: newAgreement,
+        });
+        if (!newAgreement) {
+            res.status(400).json({ success: false, message: "Agreement creation failed", agreement: {} });
+            return;
+        }
     }
-    const agreementNumber = (0, generateAgreementNumber_1.default)(commencementDate, pfiId);
-    const newAgreement = yield (setup_1.db === null || setup_1.db === void 0 ? void 0 : setup_1.db.insert(agreements_1.default).values({
-        pfiId,
-        agreementNumber: agreementNumber,
-        agreementAmount,
-        agreementPeriod: agreementPeriod,
-        commencementDate,
-        expiryDate,
-    }));
-    res.status(201).json(newAgreement);
+    catch (error) {
+        res.status(500).json({ success: false, message: error, agreement: {} });
+    }
 });
 exports.createAgreement = createAgreement;
 const rejectAgreement = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
