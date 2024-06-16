@@ -3,7 +3,7 @@ import { approveUser, fetchAllUsersFromEmail, fetchAllUsersFromPfi, fetchInactiv
 
 const userRouter = Router();
 
-userRouter.get("/inactive",fetchInactiveUsersAndPfi)
+userRouter.get("/pending",fetchInactiveUsersAndPfi)
 userRouter.get("/user/:email",fetchAllUsersFromEmail);
 userRouter.get("/pfi/:parentId",fetchAllUsersFromPfi);
 userRouter.put("/approve/:userId",approveUser);

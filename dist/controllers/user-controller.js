@@ -68,23 +68,35 @@ const approveUser = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.approveUser = approveUser;
 const fetchInactiveUsersAndPfi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log('Fetching inactive users...');
+        console.log("Fetching inactive users...");
         const users = yield setup_1.db.select().from(user_1.default).where((0, drizzle_orm_1.eq)(user_1.default.isActive, false));
-        console.log('Inactive users:', users);
+        console.log("Inactive users:", users);
         if (users.length === 0) {
-            return res.status(404).json({ success: false, message: "No inactive users found" });
+            return res
+                .status(404)
+                .json({ success: false, message: "No inactive users found" });
         }
-        console.log('Fetching inactive PFIs...');
-        const pfis = yield setup_1.db.select().from(pfi_1.default).where((0, drizzle_orm_1.eq)(pfi_1.default.isActive, false));
-        console.log('Inactive PFIs:', pfis);
+        console.log("Fetching inactive PFIs...");
+        const parentId = users[0].parentId;
+        if (!parentId) {
+            return res
+                .status(404)
+                .json({ success: false, message: "No PFIs found for this user" });
+        }
+        const pfis = yield setup_1.db.select().from(pfi_1.default).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(pfi_1.default.isActive, false), (0, drizzle_orm_1.eq)(pfi_1.default.id, parentId)));
+        console.log("Inactive PFIs:", pfis);
         if (pfis.length === 0) {
-            return res.status(404).json({ success: false, message: "No inactive PFIs found" });
+            return res
+                .status(404)
+                .json({ success: false, message: "No inactive PFIs found" });
         }
         return res.status(200).json({ success: true, users: users, pfis: pfis });
     }
     catch (error) {
         console.error("Error fetching inactive users and PFIs:", error);
-        return res.status(500).json({ success: false, message: "Internal server error" });
+        return res
+            .status(500)
+            .json({ success: false, message: "Internal server error" });
     }
 });
 exports.fetchInactiveUsersAndPfi = fetchInactiveUsersAndPfi;
