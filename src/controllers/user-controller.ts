@@ -65,33 +65,26 @@ export const approveUser: RequestHandler = async (req, res) => {
 
 export const fetchInactiveUsersAndPfi: RequestHandler = async (req, res) => {
   try {
-    console.log("Fetching inactive users...");
-    const users = await db.select().from(user).where(eq(user.isActive, false));
-    console.log("Inactive users:", users);
+    const users = await db
+      .select({
+        id: user.id,
+        fullName: user.fullName,
+        email: user.email,
+        pfiId: user.parentId,
+        orgAddress: pfi.address,
+        orgName: pfi.name,
+      })
+      .from(user)
+      .leftJoin(pfi, eq(user.parentId, pfi.id))
+      .where(eq(user.isActive, false));
 
     if (users.length === 0) {
       return res
         .status(404)
         .json({ success: false, message: "No inactive users found" });
     }
-
-    console.log("Fetching inactive PFIs...");
-    const parentId = users[0].parentId; 
-    if (!parentId) {
-      return res
-        .status(404)
-        .json({ success: false, message: "No PFIs found for this user" });
-    }
-    const pfis = await db.select().from(pfi).where(and(eq(pfi.isActive, false), eq(pfi.id, parentId)));
-    console.log("Inactive PFIs:", pfis);
-
-    if (pfis.length === 0) {
-      return res
-        .status(404)
-        .json({ success: false, message: "No inactive PFIs found" });
-    }
-
-    return res.status(200).json({ success: true, users: users, pfis: pfis });
+ 
+    return res.status(200).json({ success: true, user: users});
   } catch (error) {
     console.error("Error fetching inactive users and PFIs:", error);
     return res
