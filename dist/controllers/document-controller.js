@@ -35,11 +35,10 @@ const pfiDocuments = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
     const files = req.files;
     if (!req.files || !Array.isArray(req.files)) {
-        return res
-            .status(400)
-            .json({
-            message: "Invalid or no file(s) were given",
-            allowedFiles: ".pdf, .docx, .doc, .txt",
+        return res.status(400).json({
+            success: false,
+            message: "Invalid or no file(s) were given,.pdf, .docx, .doc, .txt",
+            urls: [],
         });
     }
     // Upload files to S3 and get the URLs
@@ -47,7 +46,13 @@ const pfiDocuments = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         const uploadPromises = files.map((file) => (0, upload_1.default)(file));
         const urls = yield Promise.all(uploadPromises);
         if (!urls || urls.length === 0) {
-            return res.status(500).json({ message: "Failed to upload files" });
+            return res
+                .status(404)
+                .json({
+                success: false,
+                message: "URL not available for the files",
+                urls: [],
+            });
         }
         const parsedAgreementId = parseInt(agreementId);
         yield (setup_1.db === null || setup_1.db === void 0 ? void 0 : setup_1.db.insert(documents_1.default).values({
@@ -56,13 +61,14 @@ const pfiDocuments = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             agreementId: parsedAgreementId,
         }));
         res.status(201).json({
+            success: true,
             urls,
             message: "Files uploaded successfully",
         });
     }
     catch (error) {
         console.error("Error uploading files:", error);
-        res.status(500).json({ message: "Failed to upload files" });
+        res.status(500).json({ success: true, message: error, urls: [] });
     }
 });
 exports.pfiDocuments = pfiDocuments;

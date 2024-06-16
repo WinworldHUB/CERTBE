@@ -6,7 +6,7 @@ import uploadFile from "../utils/upload";
 import documents from "../db/schema/documents";
 
 export const getDocbyAgreementId: RequestHandler = async (req, res) => {
-  const {agreementId} = req.params;
+  const { agreementId } = req.params;
   if (!agreementId) {
     res.status(400).json({ error: "PFI ID is required" });
     return;
@@ -21,7 +21,7 @@ export const getDocbyAgreementId: RequestHandler = async (req, res) => {
 };
 
 export const pfiDocuments: RequestHandler = async (req, res) => {
-  const {agreementId} = req.params;
+  const { agreementId } = req.params;
 
   if (!agreementId) {
     return res.status(400).json({ message: "Agreement ID is required" });
@@ -29,12 +29,11 @@ export const pfiDocuments: RequestHandler = async (req, res) => {
 
   const files = req.files as Express.Multer.File[];
   if (!req.files || !Array.isArray(req.files)) {
-    return res
-      .status(400)
-      .json({
-        message: "Invalid or no file(s) were given",
-        allowedFiles: ".pdf, .docx, .doc, .txt",
-      });
+    return res.status(400).json({
+      success: false,
+      message: "Invalid or no file(s) were given,.pdf, .docx, .doc, .txt",
+      urls: [],
+    });
   }
   // Upload files to S3 and get the URLs
   try {
@@ -42,9 +41,15 @@ export const pfiDocuments: RequestHandler = async (req, res) => {
     const urls = await Promise.all(uploadPromises);
 
     if (!urls || urls.length === 0) {
-      return res.status(500).json({ message: "Failed to upload files" });
+      return res
+        .status(404)
+        .json({
+          success: false,
+          message: "URL not available for the files",
+          urls: [],
+        });
     }
-    const parsedAgreementId= parseInt(agreementId);
+    const parsedAgreementId = parseInt(agreementId);
     await db?.insert(documents).values({
       name: files[0].originalname,
       url: urls[0],
@@ -52,11 +57,12 @@ export const pfiDocuments: RequestHandler = async (req, res) => {
     });
 
     res.status(201).json({
+      success: true,
       urls,
       message: "Files uploaded successfully",
     });
   } catch (error) {
     console.error("Error uploading files:", error);
-    res.status(500).json({ message: "Failed to upload files" });
+    res.status(500).json({ success: true, message: error, urls: [] });
   }
 };
