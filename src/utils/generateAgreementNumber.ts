@@ -1,3 +1,5 @@
+import {DateTime} from 'luxon';
+
 const generateAgreementNumber = (
   commencementDate: Date,
   pfiId: number
@@ -9,12 +11,7 @@ const generateAgreementNumber = (
 };
 
 const formatDate = (date: Date): string => {
-  const options: Intl.DateTimeFormatOptions = {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  };
-  return date.toLocaleDateString("en-GB", options).replace(/ /g, "");
+  return DateTime.fromJSDate(date).toFormat("ddLLLyyyy")
 };
 
 export default generateAgreementNumber;
