@@ -28,16 +28,11 @@ export type ValidationResult =  {
 
 export type AgreementRequest = {
   pfiId: number; 
-  isActive?: boolean;
-  status?: string; 
   agreementAmount: string; 
   agreementPeriod: string; 
-  isPaid?: boolean; 
-  isApproved?: boolean; 
   commencementDate?: Date; 
   expiryDate?: Date; 
-  createdAt: Date;
-  updatedAt: Date;
+
 }
 
 interface ApproveRegistrationRequest {
