@@ -6,7 +6,7 @@ import stytchClient from "../stytchClient";
 import { SignupRequest, LoginRequest } from "../types";
 import validateUser from "../utils/validateUser";
 import pfi from "../db/schema/pfi";
-import sendWelcomeEmail from "../emails/welcome-email";
+import {sendWelcomeEmail} from "../emails/welcome-email";
 
 export const register: RequestHandler = async (req, res) => {
   const {
@@ -53,6 +53,8 @@ export const register: RequestHandler = async (req, res) => {
         isPrimary: true,
         parentId: pfiId,
       });
+
+      await sendWelcomeEmail(email);
 
       return res.status(201).json({
         success: true,

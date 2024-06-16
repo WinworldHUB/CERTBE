@@ -1,15 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AGREEMENT_STATUS = exports.getFullApiKey = exports.BREVO_CONFIG = void 0;
+exports.AGREEMENT_STATUS = exports.SENDGRID_CONFIG = exports.getFullBrevoApiKey = exports.BREVO_CONFIG = void 0;
 exports.BREVO_CONFIG = {
     API_KEY_PREFIX: "xkeysib",
     API_KEY_MAJOR: "-e8a0391fb166701a2e742c9dc85c54555d-d29721263b30829f5655a2cf32c513-",
     API_KEY_MINOR: "ZJY93EsJf0lvJH6X",
 };
-const getFullApiKey = () => {
+const getFullBrevoApiKey = () => {
     return `${exports.BREVO_CONFIG.API_KEY_PREFIX}${exports.BREVO_CONFIG.API_KEY_MAJOR}${exports.BREVO_CONFIG.API_KEY_MINOR}`;
 };
-exports.getFullApiKey = getFullApiKey;
+exports.getFullBrevoApiKey = getFullBrevoApiKey;
+exports.SENDGRID_CONFIG = {
+    API_KEY_PREFIX: "SG.",
+    API_KEY_MAJOR: "RC_7dAJfTW6121MODQ0UQg.",
+    API_KEY_MINOR: "6nT65NQ2mqUUE5kJN22kITh7mCwYqYIuiRwnn9hJgho",
+};
 var AGREEMENT_STATUS;
 (function (AGREEMENT_STATUS) {
     AGREEMENT_STATUS["SUBMITTED"] = "SUBMITTED";

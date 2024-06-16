@@ -5,13 +5,13 @@ sgMail.setApiKey(
   `${SENDGRID_CONFIG.API_KEY_PREFIX}${SENDGRID_CONFIG.API_KEY_MAJOR}${SENDGRID_CONFIG.API_KEY_MINOR}`
 );
 
-const sendWelcomeEmail = async (email: string) => {
+const sendAgreementRequestEmail = async (email: string) => {
   const msg = {
     to: email,
     from: "amit.b.dubey@gmail.com",
-    subject: "Registration request recieved!",
+    subject: "Agreement request recieved!",
     text: "Registration request recieved!",
-    html: "<p>We have received your registration request. Our team will be reviewing the details and provide their feedback.</p>",
+    html: "<p>Thank you for providing agreement details. Our team is reviewing the same and shall provide their feedback.</p>",
   };
 
   sgMail.send(msg).then(
@@ -26,4 +26,4 @@ const sendWelcomeEmail = async (email: string) => {
   );
 };
 
-export { sendWelcomeEmail };
+export { sendAgreementRequestEmail };

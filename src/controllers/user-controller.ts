@@ -3,6 +3,7 @@ import user from "../db/schema/user";
 import { db } from "../db/setup";
 import { and, eq } from "drizzle-orm";
 import pfi from "../db/schema/pfi";
+import { sendRegistrationApprovalEmail } from "../emails/approve-user-email";
 export const fetchAllUsersFromEmail: RequestHandler = async (req, res) => {
   const { email } = req.params;
   if (!email) {
@@ -71,6 +72,13 @@ export const approveUser: RequestHandler = async (req, res) => {
     ]);
 
     if (updateUserResult && updatePfiResult) {
+      const storedUser = await db
+        ?.select({
+          email: user.email,
+        })
+        .from(user)
+        .where(eq(user.id, parsedUserId));
+      await sendRegistrationApprovalEmail(storedUser[0].email);
       return res.status(200).json({
         success: true,
         message: "User and PFI approved successfully",
@@ -105,9 +113,7 @@ export const fetchInactiveUsersAndPfi: RequestHandler = async (req, res) => {
       .where(eq(user.isActive, false));
 
     if (users.length === 0) {
-      return res
-        .status(200)
-        .json({ success: true, user: [] });
+      return res.status(200).json({ success: true, user: [] });
     }
 
     return res.status(200).json({ success: true, user: users });

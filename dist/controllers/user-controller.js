@@ -17,6 +17,7 @@ const user_1 = __importDefault(require("../db/schema/user"));
 const setup_1 = require("../db/setup");
 const drizzle_orm_1 = require("drizzle-orm");
 const pfi_1 = __importDefault(require("../db/schema/pfi"));
+const approve_user_email_1 = require("../emails/approve-user-email");
 const fetchAllUsersFromEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email } = req.params;
     if (!email) {
@@ -64,6 +65,10 @@ const approveUser = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
             updatePfiPromise,
         ]);
         if (updateUserResult && updatePfiResult) {
+            const storedUser = yield (setup_1.db === null || setup_1.db === void 0 ? void 0 : setup_1.db.select({
+                email: user_1.default.email,
+            }).from(user_1.default).where((0, drizzle_orm_1.eq)(user_1.default.id, parsedUserId)));
+            yield (0, approve_user_email_1.sendRegistrationApprovalEmail)(storedUser[0].email);
             return res.status(200).json({
                 success: true,
                 message: "User and PFI approved successfully",
@@ -99,9 +104,7 @@ const fetchInactiveUsersAndPfi = (req, res) => __awaiter(void 0, void 0, void 0,
             .leftJoin(pfi_1.default, (0, drizzle_orm_1.eq)(user_1.default.parentId, pfi_1.default.id))
             .where((0, drizzle_orm_1.eq)(user_1.default.isActive, false));
         if (users.length === 0) {
-            return res
-                .status(200)
-                .json({ success: true, user: [] });
+            return res.status(200).json({ success: true, user: [] });
         }
         return res.status(200).json({ success: true, user: users });
     }

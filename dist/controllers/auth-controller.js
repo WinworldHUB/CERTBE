@@ -19,6 +19,7 @@ const setup_1 = require("../db/setup");
 const stytchClient_1 = __importDefault(require("../stytchClient"));
 const validateUser_1 = __importDefault(require("../utils/validateUser"));
 const pfi_1 = __importDefault(require("../db/schema/pfi"));
+const welcome_email_1 = require("../emails/welcome-email");
 const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userFullName, email, phone, address, password, orgName, } = req.body;
     if (!userFullName || !email || !phone || !address || !password || !orgName) {
@@ -49,6 +50,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 isPrimary: true,
                 parentId: pfiId,
             }));
+            yield (0, welcome_email_1.sendWelcomeEmail)(email);
             return res.status(201).json({
                 success: true,
                 message: "Added Successfully",
