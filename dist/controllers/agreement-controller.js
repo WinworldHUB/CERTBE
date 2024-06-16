@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.approveAgreementPayment = exports.rejectAgreement = exports.createAgreement = exports.approveAgreement = exports.getAgreementbyPfiId = exports.getAllAgreements = void 0;
+exports.getAgreementDetails = exports.approveAgreementPayment = exports.rejectAgreement = exports.createAgreement = exports.approveAgreement = exports.getAgreementbyPfiId = exports.getAllAgreements = void 0;
 const drizzle_orm_1 = require("drizzle-orm");
 const agreements_1 = __importDefault(require("../db/schema/agreements"));
 const setup_1 = require("../db/setup");
@@ -107,9 +107,7 @@ const createAgreement = (req, res) => __awaiter(void 0, void 0, void 0, function
         !commencementDate ||
         !expiryDate) {
         console.log("Validation failed: Missing agreement data");
-        return res
-            .status(400)
-            .json({
+        return res.status(400).json({
             success: false,
             message: "Agreement data is required",
             agreement: {},
@@ -119,14 +117,17 @@ const createAgreement = (req, res) => __awaiter(void 0, void 0, void 0, function
         console.log("Generating agreement number");
         const agreementNumber = (0, generateAgreementNumber_1.default)(new Date(commencementDate), pfiId);
         console.log("Inserting agreement into database");
-        const newAgreement = yield setup_1.db.insert(agreements_1.default).values({
+        const newAgreement = yield setup_1.db
+            .insert(agreements_1.default)
+            .values({
             pfiId,
             agreementNumber,
             agreementAmount,
             agreementPeriod,
             commencementDate: new Date(commencementDate),
             expiryDate: new Date(expiryDate),
-        }).returning({
+        })
+            .returning({
             agreementId: agreements_1.default.id,
             pfiId: agreements_1.default.pfiId,
             agreementNumber: agreements_1.default.agreementNumber,
@@ -138,9 +139,7 @@ const createAgreement = (req, res) => __awaiter(void 0, void 0, void 0, function
         });
         if (!newAgreement) {
             console.log("Agreement creation failed");
-            return res
-                .status(400)
-                .json({
+            return res.status(400).json({
                 success: false,
                 message: "Agreement creation failed",
                 agreement: {},
@@ -181,3 +180,48 @@ const approveAgreementPayment = (req, res) => __awaiter(void 0, void 0, void 0, 
     res.status(200).json(updatedAgreement);
 });
 exports.approveAgreementPayment = approveAgreementPayment;
+const getAgreementDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { agreementId } = req.params;
+    if (!agreementId) {
+        res.status(400).json({ error: "Agreement ID is required" });
+        return;
+    }
+    const parsedAgreementId = parseInt(agreementId);
+    try {
+        const fetchedAgreements = yield (setup_1.db === null || setup_1.db === void 0 ? void 0 : setup_1.db.select({
+            agreementId: agreements_1.default.id,
+            pfiId: agreements_1.default.pfiId,
+            agreementNumber: agreements_1.default.agreementNumber,
+            agreementAmount: agreements_1.default.agreementAmount,
+            commencementDate: agreements_1.default.commencementDate,
+            expiryDate: agreements_1.default.expiryDate,
+            agreementPeriod: agreements_1.default.agreementPeriod,
+        }).from(agreements_1.default).where((0, drizzle_orm_1.eq)(agreements_1.default.id, parsedAgreementId)));
+        if (fetchedAgreements.length === 0) {
+            res.status(200).json({
+                success: true,
+                message: "No agreement found for this PFI",
+                agreement: {},
+                documents: [],
+            });
+            return;
+        }
+        const storedDocuments = yield (setup_1.db === null || setup_1.db === void 0 ? void 0 : setup_1.db.select({
+            documentId: documents_1.default.id,
+            documentName: documents_1.default.name,
+            documentUrl: documents_1.default.url,
+        }).from(documents_1.default).where((0, drizzle_orm_1.eq)(documents_1.default.agreementId, fetchedAgreements[0].agreementId)));
+        res.status(200).json({
+            success: true,
+            message: "Agreement details fetched successfully",
+            agreement: fetchedAgreements[0],
+            documents: storedDocuments !== null && storedDocuments !== void 0 ? storedDocuments : [],
+        });
+    }
+    catch (error) {
+        res
+            .status(500)
+            .json({ success: false, message: error, agreement: {}, documents: [] });
+    }
+});
+exports.getAgreementDetails = getAgreementDetails;

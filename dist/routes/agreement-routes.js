@@ -4,6 +4,7 @@ const express_1 = require("express");
 const agreement_controller_1 = require("../controllers/agreement-controller");
 const agreementRouter = (0, express_1.Router)();
 agreementRouter.get("/", agreement_controller_1.getAllAgreements);
+agreementRouter.get("/details/:agreementId", agreement_controller_1.getAgreementDetails);
 agreementRouter.get("/pfi/:pfiId", agreement_controller_1.getAgreementbyPfiId);
 agreementRouter.post("/create", agreement_controller_1.createAgreement);
 agreementRouter.put("/approve/:agreementId", agreement_controller_1.approveAgreement);

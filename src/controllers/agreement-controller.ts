@@ -126,13 +126,11 @@ export const createAgreement: RequestHandler = async (req, res) => {
     !expiryDate
   ) {
     console.log("Validation failed: Missing agreement data");
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: "Agreement data is required",
-        agreement: {},
-      });
+    return res.status(400).json({
+      success: false,
+      message: "Agreement data is required",
+      agreement: {},
+    });
   }
 
   try {
@@ -142,34 +140,34 @@ export const createAgreement: RequestHandler = async (req, res) => {
       pfiId
     );
     console.log("Inserting agreement into database");
-    const newAgreement = await db.insert(agreements).values({
-      pfiId,
-      agreementNumber,
-      agreementAmount,
-      agreementPeriod,
-      commencementDate: new Date(commencementDate),
-      expiryDate: new Date(expiryDate),
-    }).returning({
-      agreementId: agreements.id,
-      pfiId: agreements.pfiId,
-      agreementNumber: agreements.agreementNumber,
-      agreementAmount: agreements.agreementAmount,
-      commencementDate: agreements.commencementDate,
-      expiryDate: agreements.expiryDate,
-      period: agreements.agreementPeriod,
-      agreementStatus: agreements.status,
-    
-    })
+    const newAgreement = await db
+      .insert(agreements)
+      .values({
+        pfiId,
+        agreementNumber,
+        agreementAmount,
+        agreementPeriod,
+        commencementDate: new Date(commencementDate),
+        expiryDate: new Date(expiryDate),
+      })
+      .returning({
+        agreementId: agreements.id,
+        pfiId: agreements.pfiId,
+        agreementNumber: agreements.agreementNumber,
+        agreementAmount: agreements.agreementAmount,
+        commencementDate: agreements.commencementDate,
+        expiryDate: agreements.expiryDate,
+        period: agreements.agreementPeriod,
+        agreementStatus: agreements.status,
+      });
 
     if (!newAgreement) {
       console.log("Agreement creation failed");
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Agreement creation failed",
-          agreement: {},
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Agreement creation failed",
+        agreement: {},
+      });
     }
 
     console.log("Agreement created successfully");
@@ -212,4 +210,58 @@ export const approveAgreementPayment: RequestHandler = async (req, res) => {
     .set({ isPaid: true })
     .where(eq(agreements.id, parsedAgreementId));
   res.status(200).json(updatedAgreement);
+};
+
+export const getAgreementDetails: RequestHandler = async (req, res) => {
+  const { agreementId } = req.params;
+  if (!agreementId) {
+    res.status(400).json({ error: "Agreement ID is required" });
+    return;
+  }
+  const parsedAgreementId = parseInt(agreementId);
+
+  try {
+    const fetchedAgreements = await db
+      ?.select({
+        agreementId: agreements.id,
+        pfiId: agreements.pfiId,
+        agreementNumber: agreements.agreementNumber,
+        agreementAmount: agreements.agreementAmount,
+        commencementDate: agreements.commencementDate,
+        expiryDate: agreements.expiryDate,
+        agreementPeriod: agreements.agreementPeriod,
+      })
+      .from(agreements)
+      .where(eq(agreements.id, parsedAgreementId));
+
+    if (fetchedAgreements.length === 0) {
+      res.status(200).json({
+        success: true,
+        message: "No agreement found for this PFI",
+        agreement: {},
+        documents: [],
+      });
+      return;
+    }
+
+    const storedDocuments = await db
+      ?.select({
+        documentId: documents.id,
+        documentName: documents.name,
+        documentUrl: documents.url,
+      })
+      .from(documents)
+      .where(eq(documents.agreementId, fetchedAgreements[0].agreementId));
+
+    res.status(200).json({
+      success: true,
+      message: "Agreement details fetched successfully",
+      agreement: fetchedAgreements[0],
+      documents: storedDocuments ?? [],
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, message: error, agreement: {}, documents: [] });
+  }
 };
