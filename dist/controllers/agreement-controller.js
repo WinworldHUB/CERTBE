@@ -39,8 +39,8 @@ const approveAgreement = (req, res) => __awaiter(void 0, void 0, void 0, functio
 });
 exports.approveAgreement = approveAgreement;
 const createAgreement = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { pfiId, agreementAmount, agreementPeriod, } = req.body;
-    if (!pfiId || !agreementAmount || !agreementPeriod) {
+    const { pfiId, agreementAmount, agreementPeriod, commencementDate, expiryDate } = req.body;
+    if (!pfiId || !agreementAmount || !agreementPeriod || !commencementDate || !expiryDate) {
         res.status(400).json({ error: "Agreement data is required" });
         return;
     }
@@ -48,6 +48,8 @@ const createAgreement = (req, res) => __awaiter(void 0, void 0, void 0, function
         pfiId,
         agreementAmount,
         agreementPeriod,
+        commencementDate,
+        expiryDate
     }));
     res.status(201).json(newAgreement);
 });

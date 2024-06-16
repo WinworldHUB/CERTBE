@@ -39,8 +39,10 @@ export const createAgreement: RequestHandler = async (req, res) => {
     pfiId,
     agreementAmount,
     agreementPeriod,
+    commencementDate,
+    expiryDate
   }: AgreementRequest = req.body;
-  if (!pfiId || !agreementAmount || !agreementPeriod) {
+  if (!pfiId || !agreementAmount || !agreementPeriod || !commencementDate || !expiryDate) {
     res.status(400).json({ error: "Agreement data is required" });
     return;
   }
@@ -49,6 +51,8 @@ export const createAgreement: RequestHandler = async (req, res) => {
     pfiId,
     agreementAmount,
     agreementPeriod,
+    commencementDate,
+    expiryDate
 
   });
   res.status(201).json(newAgreement);
