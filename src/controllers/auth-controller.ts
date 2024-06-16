@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 import { RequestHandler } from "express";
-import users from "../db/schema/user";
+import user from "../db/schema/user";
 import { db } from "../db/setup";
 import stytchClient from "../stytchClient";
 import { SignupRequest, LoginRequest } from "../types";
@@ -45,7 +45,7 @@ export const register: RequestHandler = async (req, res) => {
 
       const pfiId = postPfi[0].insertedId;
 
-      await db?.insert(users).values({
+      await db?.insert(user).values({
         fullName: userFullName,
         email: email,
         phoneNo: phone,
@@ -111,38 +111,43 @@ export const login: RequestHandler = async (req, res) => {
 
       if (stytchresponse.status_code === 200) {
         const storedUser = await db
-          ?.select()
-          .from(users)
-          .where(eq(users.email, email));
+          ?.select({
+            fullName: user.fullName,
+            role: user.role,
+            pfiId: user.parentId,
+            orgName: pfi.name,
+            orgAddress: pfi.address,
+          })
+          .from(user)
+          .leftJoin(pfi, eq(user.parentId, pfi.id))
+          .where(eq(user.email, email));
 
-        if (!storedUser[0].parentId) {
+        if (!storedUser[0]) {
           return res.status(404).json({
             success: false,
-            message: "PFI for this user not found",
+            message: "Unable to login",
             session_duration: "",
             session_token: "",
             pfiId: "",
             session_jwt: "",
             fullName: "",
+            orgName: "",
+            orgAdress: "",
           });
         }
-        const storedPfi = await db
-          ?.select()
-          .from(pfi)
-          .where(eq(pfi.id, storedUser[0].parentId));
+  
 
-        const pfiId = storedPfi[0].id;
-
-        const userFullName = storedUser[0].fullName;
         return res.status(201).json({
           success: true,
           message: "Logged In Successfully",
           session_duration: "366 days",
           session_token: stytchresponse.session_token,
           session_jwt: stytchresponse.session_jwt,
-          fullName: userFullName,
+          fullName: storedUser[0].fullName,
           userRole: storedUser[0].role,
-          pfiId: pfiId,
+          pfiId: storedUser[0].pfiId,
+          orgName: storedUser[0].orgName,
+          orgAdress: storedUser[0].orgAddress,
         });
       }
     }
@@ -156,6 +161,8 @@ export const login: RequestHandler = async (req, res) => {
       pfiId: "",
       session_jwt: "",
       fullName: "",
+      orgName: "",
+      orgAdress: "",
     });
   }
 };

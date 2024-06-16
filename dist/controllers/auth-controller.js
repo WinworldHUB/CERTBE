@@ -101,30 +101,37 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 session_duration_minutes: 527040,
             });
             if (stytchresponse.status_code === 200) {
-                const storedUser = yield (setup_1.db === null || setup_1.db === void 0 ? void 0 : setup_1.db.select().from(user_1.default).where((0, drizzle_orm_1.eq)(user_1.default.email, email)));
-                if (!storedUser[0].parentId) {
+                const storedUser = yield (setup_1.db === null || setup_1.db === void 0 ? void 0 : setup_1.db.select({
+                    fullName: user_1.default.fullName,
+                    role: user_1.default.role,
+                    pfiId: user_1.default.parentId,
+                    orgName: pfi_1.default.name,
+                    orgAddress: pfi_1.default.address,
+                }).from(user_1.default).leftJoin(pfi_1.default, (0, drizzle_orm_1.eq)(user_1.default.parentId, pfi_1.default.id)).where((0, drizzle_orm_1.eq)(user_1.default.email, email)));
+                if (!storedUser[0]) {
                     return res.status(404).json({
                         success: false,
-                        message: "PFI for this user not found",
+                        message: "Unable to login",
                         session_duration: "",
                         session_token: "",
                         pfiId: "",
                         session_jwt: "",
                         fullName: "",
+                        orgName: "",
+                        orgAdress: "",
                     });
                 }
-                const storedPfi = yield (setup_1.db === null || setup_1.db === void 0 ? void 0 : setup_1.db.select().from(pfi_1.default).where((0, drizzle_orm_1.eq)(pfi_1.default.id, storedUser[0].parentId)));
-                const pfiId = storedPfi[0].id;
-                const userFullName = storedUser[0].fullName;
                 return res.status(201).json({
                     success: true,
                     message: "Logged In Successfully",
                     session_duration: "366 days",
                     session_token: stytchresponse.session_token,
                     session_jwt: stytchresponse.session_jwt,
-                    fullName: userFullName,
+                    fullName: storedUser[0].fullName,
                     userRole: storedUser[0].role,
-                    pfiId: pfiId,
+                    pfiId: storedUser[0].pfiId,
+                    orgName: storedUser[0].orgName,
+                    orgAdress: storedUser[0].orgAddress,
                 });
             }
         }
@@ -139,6 +146,8 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             pfiId: "",
             session_jwt: "",
             fullName: "",
+            orgName: "",
+            orgAdress: "",
         });
     }
 });
