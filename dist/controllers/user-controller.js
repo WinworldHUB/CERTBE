@@ -101,7 +101,7 @@ const fetchInactiveUsersAndPfi = (req, res) => __awaiter(void 0, void 0, void 0,
         if (users.length === 0) {
             return res
                 .status(200)
-                .json({ success: false, user: [] });
+                .json({ success: true, user: [] });
         }
         return res.status(200).json({ success: true, user: users });
     }

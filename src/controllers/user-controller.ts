@@ -107,7 +107,7 @@ export const fetchInactiveUsersAndPfi: RequestHandler = async (req, res) => {
     if (users.length === 0) {
       return res
         .status(200)
-        .json({ success: false, user: [] });
+        .json({ success: true, user: [] });
     }
 
     return res.status(200).json({ success: true, user: users });
