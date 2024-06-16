@@ -109,7 +109,6 @@ export const approveAgreement: RequestHandler = async (req, res) => {
     .where(eq(agreements.id, parsedAgreementId));
   res.status(200).json(updatedAgreement);
 };
-
 export const createAgreement: RequestHandler = async (req, res) => {
   const {
     pfiId,
@@ -117,43 +116,71 @@ export const createAgreement: RequestHandler = async (req, res) => {
     agreementPeriod,
     commencementDate,
     expiryDate,
-  }: AgreementRequest = req.body;
-  try {
-    if (
-      !pfiId ||
-      !agreementAmount ||
-      !agreementPeriod ||
-      !commencementDate ||
-      !expiryDate
-    ) {
-      res.status(400).json({success:false , error: "Agreement data is required", agreement: {}});
-      return;
-    }
-  
-    const agreementNumber = generateAgreementNumber(commencementDate, pfiId);
-  
-    const newAgreement = await db?.insert(agreements).values({
-      pfiId,
-      agreementNumber: agreementNumber,
-      agreementAmount,
-      agreementPeriod: agreementPeriod,
-      commencementDate,
-      expiryDate,
-    });
-    res
-      .status(201)
-      .json({
-        success: true,
-        message: "Agreement created successfully",
-        agreement: newAgreement,
-      });
+  } = req.body;
 
-      if (!newAgreement) {
-        res.status(400).json({ success: false, message: "Agreement creation failed", agreement: {} });
-        return;
-      }
+  if (
+    !pfiId ||
+    !agreementAmount ||
+    !agreementPeriod ||
+    !commencementDate ||
+    !expiryDate
+  ) {
+    console.log("Validation failed: Missing agreement data");
+    return res
+      .status(400)
+      .json({
+        success: false,
+        message: "Agreement data is required",
+        agreement: {},
+      });
+  }
+
+  try {
+    console.log("Generating agreement number");
+    const agreementNumber = generateAgreementNumber(
+      new Date(commencementDate),
+      pfiId
+    );
+    console.log("Inserting agreement into database");
+    const newAgreement = await db.insert(agreements).values({
+      pfiId,
+      agreementNumber,
+      agreementAmount,
+      agreementPeriod,
+      commencementDate: new Date(commencementDate),
+      expiryDate: new Date(expiryDate),
+    }).returning({
+      agreementId: agreements.id,
+      pfiId: agreements.pfiId,
+      agreementNumber: agreements.agreementNumber,
+      agreementAmount: agreements.agreementAmount,
+      commencementDate: agreements.commencementDate,
+      expiryDate: agreements.expiryDate,
+      period: agreements.agreementPeriod,
+      agreementStatus: agreements.status,
+    
+    })
+
+    if (!newAgreement) {
+      console.log("Agreement creation failed");
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Agreement creation failed",
+          agreement: {},
+        });
+    }
+
+    console.log("Agreement created successfully");
+    res.status(201).json({
+      success: true,
+      message: "Agreement created successfully",
+      agreement: newAgreement[0],
+    });
   } catch (error) {
-    res.status(500).json({ success: false, message: error, agreement: {}});
+    console.error("Error creating agreement:", error);
+    res.status(500).json({ success: false, message: error, agreement: {} });
   }
 };
 

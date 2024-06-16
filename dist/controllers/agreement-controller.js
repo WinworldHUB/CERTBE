@@ -101,37 +101,60 @@ const approveAgreement = (req, res) => __awaiter(void 0, void 0, void 0, functio
 exports.approveAgreement = approveAgreement;
 const createAgreement = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { pfiId, agreementAmount, agreementPeriod, commencementDate, expiryDate, } = req.body;
-    try {
-        if (!pfiId ||
-            !agreementAmount ||
-            !agreementPeriod ||
-            !commencementDate ||
-            !expiryDate) {
-            res.status(400).json({ success: false, error: "Agreement data is required", agreement: {} });
-            return;
-        }
-        const agreementNumber = (0, generateAgreementNumber_1.default)(commencementDate, pfiId);
-        const newAgreement = yield (setup_1.db === null || setup_1.db === void 0 ? void 0 : setup_1.db.insert(agreements_1.default).values({
-            pfiId,
-            agreementNumber: agreementNumber,
-            agreementAmount,
-            agreementPeriod: agreementPeriod,
-            commencementDate,
-            expiryDate,
-        }));
-        res
-            .status(201)
+    if (!pfiId ||
+        !agreementAmount ||
+        !agreementPeriod ||
+        !commencementDate ||
+        !expiryDate) {
+        console.log("Validation failed: Missing agreement data");
+        return res
+            .status(400)
             .json({
-            success: true,
-            message: "Agreement created successfully",
-            agreement: newAgreement,
+            success: false,
+            message: "Agreement data is required",
+            agreement: {},
+        });
+    }
+    try {
+        console.log("Generating agreement number");
+        const agreementNumber = (0, generateAgreementNumber_1.default)(new Date(commencementDate), pfiId);
+        console.log("Inserting agreement into database");
+        const newAgreement = yield setup_1.db.insert(agreements_1.default).values({
+            pfiId,
+            agreementNumber,
+            agreementAmount,
+            agreementPeriod,
+            commencementDate: new Date(commencementDate),
+            expiryDate: new Date(expiryDate),
+        }).returning({
+            agreementId: agreements_1.default.id,
+            pfiId: agreements_1.default.pfiId,
+            agreementNumber: agreements_1.default.agreementNumber,
+            agreementAmount: agreements_1.default.agreementAmount,
+            commencementDate: agreements_1.default.commencementDate,
+            expiryDate: agreements_1.default.expiryDate,
+            period: agreements_1.default.agreementPeriod,
+            agreementStatus: agreements_1.default.status,
         });
         if (!newAgreement) {
-            res.status(400).json({ success: false, message: "Agreement creation failed", agreement: {} });
-            return;
+            console.log("Agreement creation failed");
+            return res
+                .status(400)
+                .json({
+                success: false,
+                message: "Agreement creation failed",
+                agreement: {},
+            });
         }
+        console.log("Agreement created successfully");
+        res.status(201).json({
+            success: true,
+            message: "Agreement created successfully",
+            agreement: newAgreement[0],
+        });
     }
     catch (error) {
+        console.error("Error creating agreement:", error);
         res.status(500).json({ success: false, message: error, agreement: {} });
     }
 });
