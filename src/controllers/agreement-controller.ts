@@ -77,6 +77,7 @@ export const getAgreementbyPfiId: RequestHandler = async (req, res) => {
       commencementDate: agreements.commencementDate,
       expiryDate: agreements.expiryDate,
       period: agreements.agreementPeriod,
+      status: agreements.status,
     })
     .from(agreements)
     .leftJoin(pfi, eq(agreements.pfiId, pfi.id))
@@ -87,6 +88,7 @@ export const getAgreementbyPfiId: RequestHandler = async (req, res) => {
       pfi.name,
       agreements.agreementNumber,
       pfi.address,
+      agreements.status,
       agreements.agreementAmount,
       agreements.commencementDate,
       agreements.expiryDate,
@@ -102,7 +104,7 @@ export const getAgreementbyPfiId: RequestHandler = async (req, res) => {
 
   res.status(200).json({
     success: true,
-    agreement: fetchedAgreements,
+    agreements: fetchedAgreements,
     documents: [],
   });
 };
