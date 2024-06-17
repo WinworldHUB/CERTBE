@@ -109,7 +109,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     pfiId: user_1.default.parentId,
                     orgName: pfi_1.default.name,
                     orgAddress: pfi_1.default.address,
-                }).from(user_1.default).leftJoin(pfi_1.default, (0, drizzle_orm_1.eq)(user_1.default.parentId, pfi_1.default.id)).where((0, drizzle_orm_1.eq)(user_1.default.email, email)));
+                }).from(user_1.default).leftJoin(pfi_1.default, (0, drizzle_orm_1.eq)(user_1.default.parentId, pfi_1.default.id)).where((0, drizzle_orm_1.eq)(user_1.default.email, email)).groupBy(user_1.default.fullName, user_1.default.role, user_1.default.parentId, pfi_1.default.name, pfi_1.default.address));
                 if (!storedUser[0]) {
                     return res.status(404).json({
                         success: false,

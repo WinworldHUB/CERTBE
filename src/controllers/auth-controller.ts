@@ -122,7 +122,14 @@ export const login: RequestHandler = async (req, res) => {
           })
           .from(user)
           .leftJoin(pfi, eq(user.parentId, pfi.id))
-          .where(eq(user.email, email));
+          .where(eq(user.email, email)).groupBy(
+            user.fullName,
+            user.role,
+            user.parentId,
+            pfi.name,
+            pfi.address
+          
+          );
 
         if (!storedUser[0]) {
           return res.status(404).json({

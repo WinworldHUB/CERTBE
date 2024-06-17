@@ -102,7 +102,7 @@ const fetchInactiveUsersAndPfi = (req, res) => __awaiter(void 0, void 0, void 0,
         })
             .from(user_1.default)
             .leftJoin(pfi_1.default, (0, drizzle_orm_1.eq)(user_1.default.parentId, pfi_1.default.id))
-            .where((0, drizzle_orm_1.eq)(user_1.default.isActive, false));
+            .where((0, drizzle_orm_1.eq)(user_1.default.isActive, false)).groupBy(user_1.default.id, user_1.default.fullName, user_1.default.email, user_1.default.parentId, pfi_1.default.address, pfi_1.default.name);
         if (users.length === 0) {
             return res.status(200).json({ success: true, user: [] });
         }

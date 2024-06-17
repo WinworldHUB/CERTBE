@@ -110,7 +110,14 @@ export const fetchInactiveUsersAndPfi: RequestHandler = async (req, res) => {
       })
       .from(user)
       .leftJoin(pfi, eq(user.parentId, pfi.id))
-      .where(eq(user.isActive, false));
+      .where(eq(user.isActive, false)).groupBy(
+        user.id,
+        user.fullName,
+        user.email,
+        user.parentId,
+        pfi.address,
+        pfi.name
+      )
 
     if (users.length === 0) {
       return res.status(200).json({ success: true, user: [] });

@@ -32,7 +32,7 @@ const getAllAgreements = (req, res) => __awaiter(void 0, void 0, void 0, functio
             commencementDate: agreements_1.default.commencementDate,
             expiryDate: agreements_1.default.expiryDate,
             period: agreements_1.default.agreementPeriod,
-        }).from(agreements_1.default).leftJoin(pfi_1.default, (0, drizzle_orm_1.eq)(agreements_1.default.pfiId, pfi_1.default.id)).where((0, drizzle_orm_1.eq)(agreements_1.default.isActive, true)));
+        }).from(agreements_1.default).leftJoin(pfi_1.default, (0, drizzle_orm_1.eq)(agreements_1.default.pfiId, pfi_1.default.id)).where((0, drizzle_orm_1.eq)(agreements_1.default.isActive, true)).groupBy(agreements_1.default.id, agreements_1.default.pfiId, pfi_1.default.name, agreements_1.default.status, pfi_1.default.address, agreements_1.default.agreementNumber, agreements_1.default.agreementAmount, agreements_1.default.commencementDate, agreements_1.default.expiryDate, agreements_1.default.agreementPeriod));
         if (fetchedAgreements.length === 0) {
             res.status(200).json({
                 success: true,
@@ -69,7 +69,7 @@ const getAgreementbyPfiId = (req, res) => __awaiter(void 0, void 0, void 0, func
         commencementDate: agreements_1.default.commencementDate,
         expiryDate: agreements_1.default.expiryDate,
         period: agreements_1.default.agreementPeriod,
-    }).from(agreements_1.default).leftJoin(pfi_1.default, (0, drizzle_orm_1.eq)(agreements_1.default.pfiId, parsedPfiId)).where((0, drizzle_orm_1.eq)(agreements_1.default.pfiId, parsedPfiId)));
+    }).from(agreements_1.default).leftJoin(pfi_1.default, (0, drizzle_orm_1.eq)(agreements_1.default.pfiId, pfi_1.default.id)).where((0, drizzle_orm_1.eq)(agreements_1.default.pfiId, parsedPfiId)).groupBy(agreements_1.default.id, agreements_1.default.pfiId, pfi_1.default.name, agreements_1.default.agreementNumber, pfi_1.default.address, agreements_1.default.agreementAmount, agreements_1.default.commencementDate, agreements_1.default.expiryDate, agreements_1.default.agreementPeriod));
     if (fetchedAgreements.length === 0) {
         res
             .status(404)

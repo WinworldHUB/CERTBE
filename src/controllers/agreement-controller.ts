@@ -24,7 +24,19 @@ export const getAllAgreements: RequestHandler = async (req, res) => {
       })
       .from(agreements)
       .leftJoin(pfi, eq(agreements.pfiId, pfi.id))
-      .where(eq(agreements.isActive, true));
+      .where(eq(agreements.isActive, true))
+      .groupBy(
+        agreements.id,
+        agreements.pfiId,
+        pfi.name,
+        agreements.status,
+        pfi.address,
+        agreements.agreementNumber,
+        agreements.agreementAmount,
+        agreements.commencementDate,
+        agreements.expiryDate,
+        agreements.agreementPeriod
+      );
 
     if (fetchedAgreements.length === 0) {
       res.status(200).json({
@@ -67,8 +79,19 @@ export const getAgreementbyPfiId: RequestHandler = async (req, res) => {
       period: agreements.agreementPeriod,
     })
     .from(agreements)
-    .leftJoin(pfi, eq(agreements.pfiId, parsedPfiId))
-    .where(eq(agreements.pfiId, parsedPfiId));
+    .leftJoin(pfi, eq(agreements.pfiId, pfi.id))
+    .where(eq(agreements.pfiId, parsedPfiId))
+    .groupBy(
+      agreements.id,
+      agreements.pfiId,
+      pfi.name,
+      agreements.agreementNumber,
+      pfi.address,
+      agreements.agreementAmount,
+      agreements.commencementDate,
+      agreements.expiryDate,
+      agreements.agreementPeriod
+    );
 
   if (fetchedAgreements.length === 0) {
     res
@@ -80,7 +103,7 @@ export const getAgreementbyPfiId: RequestHandler = async (req, res) => {
   res.status(200).json({
     success: true,
     agreement: fetchedAgreements,
-    documents:  [],
+    documents: [],
   });
 };
 
