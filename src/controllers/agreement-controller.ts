@@ -68,9 +68,7 @@ export const getAgreementbyPfiId: RequestHandler = async (req, res) => {
     })
     .from(agreements)
     .leftJoin(pfi, eq(agreements.pfiId, parsedPfiId))
-    .where(
-      and(eq(agreements.pfiId, parsedPfiId), eq(agreements.isActive, true))
-    );
+    .where(eq(agreements.pfiId, parsedPfiId));
 
   if (fetchedAgreements.length === 0) {
     res

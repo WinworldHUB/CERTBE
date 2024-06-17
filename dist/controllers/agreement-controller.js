@@ -69,7 +69,7 @@ const getAgreementbyPfiId = (req, res) => __awaiter(void 0, void 0, void 0, func
         commencementDate: agreements_1.default.commencementDate,
         expiryDate: agreements_1.default.expiryDate,
         period: agreements_1.default.agreementPeriod,
-    }).from(agreements_1.default).leftJoin(pfi_1.default, (0, drizzle_orm_1.eq)(agreements_1.default.pfiId, parsedPfiId)).where((0, drizzle_orm_1.and)((0, drizzle_orm_1.eq)(agreements_1.default.pfiId, parsedPfiId), (0, drizzle_orm_1.eq)(agreements_1.default.isActive, true))));
+    }).from(agreements_1.default).leftJoin(pfi_1.default, (0, drizzle_orm_1.eq)(agreements_1.default.pfiId, parsedPfiId)).where((0, drizzle_orm_1.eq)(agreements_1.default.pfiId, parsedPfiId)));
     if (fetchedAgreements.length === 0) {
         res
             .status(404)
