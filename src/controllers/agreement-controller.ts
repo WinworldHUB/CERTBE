@@ -77,19 +77,10 @@ export const getAgreementbyPfiId: RequestHandler = async (req, res) => {
     return;
   }
 
-  const storedDocuments = await db
-    ?.select({
-      documentId: documents.id,
-      documentName: documents.name,
-      documentUrl: documents.url,
-    })
-    .from(documents)
-    .where(eq(documents.agreementId, fetchedAgreements[0].agreementId));
-
   res.status(200).json({
     success: true,
-    agreement: fetchedAgreements[0],
-    documents: storedDocuments ?? [],
+    agreement: fetchedAgreements,
+    documents:  [],
   });
 };
 

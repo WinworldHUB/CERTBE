@@ -76,15 +76,10 @@ const getAgreementbyPfiId = (req, res) => __awaiter(void 0, void 0, void 0, func
             .json({ success: false, message: "No agreement found for this PFI" });
         return;
     }
-    const storedDocuments = yield (setup_1.db === null || setup_1.db === void 0 ? void 0 : setup_1.db.select({
-        documentId: documents_1.default.id,
-        documentName: documents_1.default.name,
-        documentUrl: documents_1.default.url,
-    }).from(documents_1.default).where((0, drizzle_orm_1.eq)(documents_1.default.agreementId, fetchedAgreements[0].agreementId)));
     res.status(200).json({
         success: true,
-        agreement: fetchedAgreements[0],
-        documents: storedDocuments !== null && storedDocuments !== void 0 ? storedDocuments : [],
+        agreement: fetchedAgreements,
+        documents: [],
     });
 });
 exports.getAgreementbyPfiId = getAgreementbyPfiId;
