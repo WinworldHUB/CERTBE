@@ -6,8 +6,27 @@ import agreements from "../db/schema/agreements";
 import { eq } from "drizzle-orm";
 
 export const fetchAllPfi: RequestHandler = async (req, res) => {
-  const pfis = await db?.select().from(pfi);
-  res.status(200).json(pfis);
+ try {
+  const pfis = await db?.select({
+    pfiId: pfi.id,
+    pfiName: pfi.name,
+    pfiAddress: pfi.address,
+    isActive: pfi.isActive,
+  }).from(pfi);
+
+  if (pfis?.length === 0) {
+    res.status(200).json({
+      success: true,
+      message: "No pfis found",
+      pfis: [],
+    });
+    return;
+  }
+  
+  res.status(200).json({ success: true, pfis: pfis ?? [], message: "Pfis fetched successfully" });
+ } catch (error) {
+  res.status(500).json({ success: false, message: error, pfis: [] });
+ }
 };
 
 export const approvePfi: RequestHandler = async (req, res) => {

@@ -17,8 +17,18 @@ const pfi_1 = __importDefault(require("../db/schema/pfi"));
 const setup_1 = require("../db/setup");
 const drizzle_orm_1 = require("drizzle-orm");
 const fetchAllPfi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const pfis = yield (setup_1.db === null || setup_1.db === void 0 ? void 0 : setup_1.db.select().from(pfi_1.default));
-    res.status(200).json(pfis);
+    try {
+        const pfis = yield (setup_1.db === null || setup_1.db === void 0 ? void 0 : setup_1.db.select({
+            pfiId: pfi_1.default.id,
+            pfiName: pfi_1.default.name,
+            pfiAddress: pfi_1.default.address,
+            isActive: pfi_1.default.isActive,
+        }).from(pfi_1.default));
+        res.status(200).json({ success: true, pfis: pfis !== null && pfis !== void 0 ? pfis : [], message: "Pfis fetched successfully" });
+    }
+    catch (error) {
+        res.status(500).json({ success: false, message: error, pfis: [] });
+    }
 });
 exports.fetchAllPfi = fetchAllPfi;
 const approvePfi = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
